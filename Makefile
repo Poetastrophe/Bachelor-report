@@ -1,2 +1,3 @@
 default:
-	pdflatex -halt-on-error main.tex && pdflatex -halt-on-error main.tex
+	mkdir -p temp_files
+	pdflatex -halt-on-error -output-directory temp_files main.tex && pdflatex -halt-on-error -output-directory temp_files main.tex
