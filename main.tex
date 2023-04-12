@@ -1,14 +1,61 @@
 \documentclass{article}
 \usepackage[utf8]{inputenc}
 
+% \usepackage{todonotes}
+\usepackage{xcolor}
+\newcommand{\todo}[1]{{\color{red} #1}}
+\newcommand{\plan}[1]{{\colorbox{cyan} {#1}}}
+
 \title{Bachelor report}
 \author{s174256 }
 \date{February 2023}
 
 \begin{document}
 
-\maketitle
+\todo{
+The form and content of a report depend on a number of things:
+\begin{itemize}
+\item The subject/problem the report deals with.
+\item The role of the author (observer, solver, advisor).
+\item The report can be an instruction manual, a maintenance manual, a guide to repeat a process, etc.
+\item The target audience (level of pre-knowledge, is shallow or deep information required).
+\item Are there different target groups needing different information?
+\item Physical restrictions (size, media used, etc).
+\end{itemize}
 
-\section{Introduction}
+What to document?:
+\begin{itemize}
+	\item What is the problem to be solved?
+	\item Is the problem specified well enough? Otherwise find a sound,
+unambiguous definition.
+\item What is needed to solve the problem?
+\item How is the solution structured?
+\item How is the solution implemented?
+\item What impact will the solution have on whom?
+\end{itemize}
+
+Problemanalysis
+\begin{itemize}
+\item Check whether the given problem description is clear and the goal is
+well-defined and unambiguous.
+\item Make a problem description which meets these requirements. Have the
+reader in mind, not only the writers.
+\item If needed, invent your own terms to make the description clear, BUT
+describe them to the reader (e.g., in a glossary), not just use them.
+When the original description is vague, this requires a drop in
+abstraction when concretising.
+\item In the same way formulate the goal(s) and the conditions when a goal is
+reached.
+\end{itemize}
+}
+
+\maketitle
+\include{00_introduction.tex}
+\include{01_problem_analysis_and_succes_criteria.tex}
+\include{02_design.tex}
+\include{03_implementation.tex}
+\include{04_testing.tex}
+\include{05_project_management.tex}
+\include{06_conclusion.tex}
 
 \end{document}
