@@ -11,3 +11,13 @@ solutions precise and compare.
 reached.
 \end{itemize}
 }
+
+The problem with making cooperative agents in hanabi is mainly due to the fact that each agent does not know its own hand, and this lack of knowledge leads to a huge number of possible state-spaces. 
+A naive approach to represent this lack of knowledge is simply to generating all possible hands given the information the agent has.
+This, I would argue, is pretty straight-forward to work with, but if done improper will lead to intolerable waiting times.
+This in combination with a modal logic approach can easily lead to a huge generation of combinations. 
+For example let us denote a game played by two players Alice and Bob. 
+If Alice sees Bobs cards (and the discard pile, and hanabi pile), then Alice can generate the set of possible hands $\mathcal{H}$, but in order to also represent the knowledge of Bob, Alice would have to for each $h \in \mathcal{H}$ generate a new set of possible hands for Bob.
+A different approach is simply to store the hints and shown cards at the agents, and at some proper time -- when a significant amount of simple knowledge has been accumulated -- produce the set $\mathcal{H}$ and the relevant sets for the other players.
+
+
