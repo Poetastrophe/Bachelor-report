@@ -1,9 +1,11 @@
 \documentclass{article}
 \usepackage[utf8]{inputenc}
 
-% \usepackage{todonotes}
+\usepackage{url}
+\usepackage{todonotes}
 \usepackage{xcolor}
-\newcommand{\todo}[1]{{\color{red} #1}}
+\newcommand{\ninanotes}[1]{{\color{red} #1}}
+\newcommand{\mytodonswer}[1]{{\color{brown} #1}}
 \newcommand{\plan}[1]{{\colorbox{cyan} {#1}}}
 
 % \usepackage{natbib}
@@ -14,7 +16,7 @@
 
 \begin{document}
 
-\todo{
+\ninanotes{
 The form and content of a report depend on a number of things:
 \begin{itemize}
 \item The subject/problem the report deals with.
@@ -24,6 +26,18 @@ The form and content of a report depend on a number of things:
 \item Are there different target groups needing different information?
 \item Physical restrictions (size, media used, etc).
 \end{itemize}
+
+\mytodonswer{
+	\begin{itemize}
+\item Hanabi complexity, optimization and zig
+\item Solver
+\item Design and implementation decisions
+\item The level of preknowledge should be basic computerscience knowledge, basic algorithms, basic compiler knowledge.
+\item no, just CS professors
+\item 20 pages it seems like :)
+	\end{itemize}
+
+}
 
 What to document?:
 \begin{itemize}
@@ -59,8 +73,7 @@ reached.
 \include{04_testing.tex}
 \include{05_project_management.tex}
 \include{06_conclusion.tex}
-
-
+% \oesuntaeoushnt
 \bibliographystyle{plain}
 \bibliography{bib.bib}
 \end{document}
