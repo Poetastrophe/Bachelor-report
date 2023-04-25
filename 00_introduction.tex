@@ -1,38 +1,41 @@
 \section{Introduction}
-\ninanotes{Introduction. Very general what it is about. Include a motivation. Name
-state-of-the-art solutions (potentially simplified), if existing. Almost
-everyone should be able to understand this.
-}
 
-Hanabi (meaning \emph{firework} in japanese) is a cooporative card-game designed by Antoine Bauza \cite{BGGHanabi}. In the game each player has a set of cards in their hand and the players must cooportate in order to play the cards in a specific sequence to achieve the highest possible score of 25 points.
+Hanabi (meaning \emph{fireworks} in Japanese) is a cooporative card-game designed by Antoine Bauza \cite{BGGHanabi}. 
+In the game each player has a set of cards in their hand and the players must cooportate in order to play the cards in a specific sequence to achieve the highest possible score of 25 points.
 The main obstacle for the players is that a player cannot see their own hand, but can see the other players' hands. 
 Despite this limitation each player must play cards from their own hand and the only way in which they can know which card to play is based on specific hints and counting the cards. 
 Since what a player can know for sure is quite restricted, each player, in practice, will have to guess the intention of the other player i.e. have a theory of mind to some extend. 
-Since it is a game with imperfect knowledge, as well as good strategies have some theory-of-mind in place, it has sparked some interest in the AI research. [ reference to this]
+Since it is a game with imperfect knowledge, as well as good strategies have some theory-of-mind in place, it has sparked some notable interest in the AI research \cite{DeepmindAndOthers}. 
 
-Solutions to the problem includes hat-guessing strategies \cite{CoxEtAl2015}, that both can be utilized to recommend moves to other players \emph{or} increasing their knowledge of what cards they currently hold. 
+I this bachelor-project I will focus on \emph{self-play} i.e. only AI agents will have to cooporate in order to get as high a score as possible, as opposed to \emph{cross-play} where some or most of the players are actually humans that try to cooporate with one or more agents.  
+
+Solutions to the problem includes hat-guessing strategies \cite{CoxEtAl2015}, Cox et al develop two strategies, one for recommending moves to other players, denoted "recommendation startegy", and one for increasing other players knowledge of what cards they currently hold, called "information strategy". 
 A hat-guessing strategy utilizes the fact that any legal move in the game can be interpreted as an encoding about some information or recommendation.
 This encoding can then be decoded by each individual, giving rise to some information or recommended action. 
-Such strategies have proven effective for hanabi, with \cite{CoxEtAl2015} getting $23.00$ points for their "recommendation strategy" and $24.68$ points for their "information strategy". 
-Looking into these strategies in detail, I reckon that these strategies are not only effective, but definitely also efficient, because it is a very small amount of data each agent has to keep track of, and deducing the encoding and updating auxillary data seems quite trivial for a computer.
-Other solutions utilize dynamic epistemic logic [reference to baltag implementation], that can very declaratively specify goals and try to find shortest paths in order to satisfy these goals. However it was difficult for me to judge the quality of the solution, given that they write that due to an issue in the initialization of the game, results are misleading.
-Good performance has also been achieved utilizing machine-learning techniques. Although they do perform slightly worse than rule-based implementations [reference to this].
+Such strategies have proven effective for hanabi, with \cite{CoxEtAl2015} getting an average of $23.00$ points for their "recommendation strategy" and $24.68$ points for their "information strategy". 
+Looking into these strategies in detail, I reckon that these strategies are not only effective, but also efficient, because it is a very small amount of data each agent has to keep track of, and deducing the encoding and updating auxillary data seems quite trivial for a computer.
+Other solutions utilize dynamic epistemic logic \cite{EgerM17}, that can very declaratively specify goals and try to find shortest paths in order to satisfy these goals. However it was difficult for me to judge the quality of the solution, given that Eger and Martens write in the code repository \cite{Ostari} that due to an issue in the initialization of the game, results are misleading. 
+There are also machine-learning oriented solutions to this problem, that nowadays seem to be on-par with the rule-based ones, but I know terribly little about machine-learning, so I will refer to such articles as \cite{hu2021otherplay} achieving average score of $24.09$.
 
-In this article I will attempt to utilize principles of epsitemic dynamic knowledge, with emphasis on knowledge about ones hand, in order to make a group of agents work together in order to score as many points as possible in Hanabi. 
+In this article I will attempt to utilize principles of epsitemic dynamic knowledge, with emphasis on knowledge about ones hand, in order to make a group of agents work together and attempt to score as many points as possible in Hanabi. 
 
-The choice of implementation language is Zig, a new C-like language with a nice set of tradeoffs, mainly due to personal interest, but also that, in my experiece, imperative and memory focused languages give rise to some interesting optimizations. 
-
-
+The choice of implementation language is Zig \cite{Ziglang}, a new C-like language with a nice set of tradeoffs, mainly due to personal interest, but also that, in my experiece, imperative and memory focused languages give rise to some interesting optimizations. 
 
 
 
-\newpage
+
 \subsection{Hanabi setup and rules}
-Hanabi consists of 50 cards, 4 black tokens, 8 blue tokens.  Of the cards there are 5 suits and 5 values. The suits are red, green, blue, white, yellow. The values are 1 through 5. For each suit there is three cards of value 1, two cards of value 2, two cards of value 3, two cards of value 4 and one card of value 5.
+Hanabi consists of 50 cards, 4 black tokens, 8 blue tokens.  
+Of the cards there are 5 suits and 5 values. 
+The suits are red, green, blue, white, yellow. 
+The values are 1 through 5. 
+For each suit there is three cards of value 1, two cards of value 2, two cards of value 3, two cards of value 4 and one card of value 5.
+The number of cards in each player's hand depends on the number of players. If there are 3 players or less, they will have 5 cards each. Otherwise they will have 4 cards each.
 
-The goal of the game is to play add as many cards as possible to the \emph{color piles}. There are 5 color piles, one for each suit. You gain a point for each card in the color piles, with a maximum of 25 points.
+The goal of the game is to play add as many cards as possible to the \emph{color piles}. 
+There are 5 color piles, one for each suit. You gain a point for each card in the color piles, with a maximum of 25 points.
 
-During a player turn you can either
+A player can spent her turn on one of the following actions
 
 \begin{itemize}
 \item Play a card
@@ -41,26 +44,31 @@ During a player turn you can either
 \end{itemize}
 
 \paragraph{Playing}
-When playing a card you attempt to add a card to one of the color piles
+When playing a card you attempt to add a card to one of the color piles.
 You can add a card $c$ to a pile of identical suit $p$ if either, 
 
 \begin{itemize}	
 \item $p$ is an empty color pile and $c$ is of value 1.
-\item $p$ is non-empty and $c$'s value is one greater than the current card on top of the pile.
+\item $p$ is non-empty and $c$'s value is exactly one greater than the current card on top of the pile.
 \end{itemize}
 
-if a card does not add to a color pile then it is discarded and then the game removes 1 black token. If you there are no black tokens the game ends immediately.  
+if a card does not add to a color pile then it is put in the discard pile and then the game removes 1 black token. 
+If you there are no black tokens the game ends immediately.  
 
 \paragraph{Hinting}
-A player can give one hint to any other player. The hint is restricted to that you can either hint about cards matching a suit or cards matching a value. So if there are a hand of following configuration: (red,1),(blue,3),(red,2),(yellow,3), each having respective indices 0 through 3. Then if you hint "cards of value 3", then you have to give the positions of both (blue,3) and (yellow,3) i.e. index 1 and 3. And if you give the hint "cards of red suit" then you have to give the position of both (red,1) and (red,2) i.e. index 0 and 2. You cannot give an "empty hint" like "there are no green cards".
+If a player chooses to hint, he can hint any other player. The hint is restricted to that you can either hint about cards matching a suit or cards matching a value. 
+So if there are a hand of following configuration: (red,1),(blue,3),(red,2),(yellow,3), each having respective indices 0 through 3. 
+Then if you hint "cards of value 3", then you have to give the positions of both (blue,3) and (yellow,3) i.e. index 1 and 3. 
+And if you give the hint "cards of red suit" then you have to give the position of both (red,1) and (red,2) i.e. index 0 and 2. 
+You cannot give an "empty hint" like "there are no green cards".
 
-When giving a hint it removes 1 blue token.
+When giving a hint it removes 1 blue token, if you cannot do that, you cannot give the hint.
 
 \paragraph{Discarding}
 A player can discard any card on their hand, and it will result in the card going in the discard pile and it adds 1 blue token (and can only be done if there are less than 8 blue tokens left).
-\newpage
 
-
+\paragraph{End of the game}
+The game ends immediatly if there are no black tokens left. The game also ends if the last card from the deck has been drawn, in which case every player can play an additional round (including the player who drew the last card) and then the game ends.
 
 
 
