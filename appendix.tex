@@ -1,0 +1,69 @@
+
+\section{Generating the hanabi distinct combinations data and calculating mean, median and std} \label{appendix:python-distinct-combinations}
+\begin{verbatim}
+python version:
+Python 3.11.2
+packages version:
+more-itertools==9.1.0
+numpy==1.24.3
+\end{verbatim}
+
+\begin{lstlisting}[language=python]
+import more_itertools
+import random
+import numpy
+random.seed(0)
+
+def main():
+    
+    # Blind draw 4 cards
+    print("Blind draw 4 cards has:", 
+    	getNumberOfCombinationsGivenHandOfSize(generateDeck(),4),
+		"unique combinations")
+    
+    # Blind draw 5 cards
+    print("Blind draw 5 cards has:", 
+    	getNumberOfCombinationsGivenHandOfSize(generateDeck(),5),
+		"unique combinations")
+    
+    # Random draw
+    n = 30 #random rounds simulated
+    # Data 2D array depending on how many players
+    data = [[],[],[],[]]
+    for _ in range(n):
+        for player_count in range(2,6):
+            number_of_cards = 5
+            if(player_count >= 4):
+                number_of_cards = 4
+            deck = generateDeck()
+            for _ in range((player_count-1)*number_of_cards):
+                removeRandom(deck,random)
+            data[player_count-2].append(
+	   	 getNumberOfCombinationsGivenHandOfSize(deck,number_of_cards))
+    
+    p = 2
+    for playerData in data:
+        print("===number of players:",p)
+        p+=1
+        print("median:",numpy.median(playerData))
+        print("mean:",numpy.mean(playerData))
+        print("std:",numpy.std(playerData))
+        print("min:",min(playerData))
+        print("max:",max(playerData))
+
+def generateDeck():
+    arr = [1,1,1,2,2,3,3,4,4,5]
+    superarr = []
+    for i in range(5):
+        for elem in arr:
+                superarr.append(elem+10*i)
+    return superarr
+
+def removeRandom(deck, random):
+    toRemove = random.randint(0,len(deck)-1)
+    deck.pop(toRemove)
+
+def getNumberOfCombinationsGivenHandOfSize(deck,size):
+    return len(list(more_itertools.distinct_combinations(deck,size)))
+main()
+\end{lstlisting}

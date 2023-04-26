@@ -1,12 +1,17 @@
 \documentclass{article}
 \usepackage[utf8]{inputenc}
 
+
+\usepackage{float}
+\usepackage{listings}
 \usepackage{url}
 \usepackage{todonotes}
 \usepackage{xcolor}
 \newcommand{\ninanotes}[1]{{\color{red} #1}}
 \newcommand{\mytodonswer}[1]{{\color{brown} #1}}
 \newcommand{\plan}[1]{{\colorbox{cyan} {#1}}}
+
+\newcommand{\KTfourfiveN}{KT$45^n$}
 
 % \usepackage{natbib}
 
@@ -66,6 +71,8 @@ reached.
 }
 
 \maketitle
+\newpage
+\tableofcontents
 \include{00_introduction.tex}
 \include{01_problem_analysis_and_succes_criteria.tex}
 \include{02_design.tex}
@@ -76,4 +83,6 @@ reached.
 % \oesuntaeoushnt
 \bibliographystyle{plain}
 \bibliography{bib.bib}
+\appendix
+\include{appendix.tex}
 \end{document}
