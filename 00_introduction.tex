@@ -14,7 +14,7 @@ A hat-guessing strategy utilizes the fact that any legal move in the game can be
 This encoding can then be decoded by each individual, giving rise to some information or recommended action. 
 Such strategies have proven effective for hanabi, with \cite{CoxEtAl2015} getting an average of $23.00$ points for their "recommendation strategy" and $24.68$ points for their "information strategy". 
 Looking into these strategies in detail, I reckon that these strategies are not only effective, but also efficient, because it is a very small amount of data each agent has to keep track of, and deducing the encoding and updating auxillary data seems quite trivial for a computer.
-Other solutions utilize dynamic epistemic logic \cite{EgerM17}, that can very declaratively specify goals and try to find shortest paths in order to satisfy these goals. However it was difficult for me to judge the quality of the solution, given that Eger and Martens write in the code repository \cite{Ostari} that due to an issue in the initialization of the game, results are misleading. 
+Other solutions utilize dynamic epistemic logic \cite{EgerAndMartens17}, that can very declaratively specify goals and try to find shortest paths in order to satisfy these goals. However it was difficult for me to judge the quality of the solution, given that Eger and Martens write in the code repository \cite{Ostari} that due to an issue in the initialization of the game, results are misleading. 
 There are also machine-learning oriented solutions to this problem, that nowadays seem to be on-par with the rule-based ones, but I know terribly little about machine-learning, so I will refer to such articles as \cite{hu2021otherplay} achieving average score of $24.09$.
 
 In this article describe my solution based on principles of epsitemic dynamic knowledge, with emphasis on knowledge about ones hand, in order to make a group of agents work together and attempt to score as many points as possible in Hanabi. 
@@ -57,7 +57,7 @@ If you there are no black tokens the game ends immediately.
 
 \paragraph{Hinting}
 If a player chooses to hint, he can hint any other player. The hint is restricted to that you can either hint about cards matching a suit or cards matching a value. 
-So if there are a hand of following configuration: (red,1),(blue,3),(red,2),(yellow,3), each having respective indices 0 through 3. 
+So if there are a hand of following configuration: ((red,1),(blue,3),(red,2),(yellow,3)), each having respective indices 0 through 3. 
 Then if you hint "cards of value 3", then you have to give the positions of both (blue,3) and (yellow,3) i.e. index 1 and 3. 
 And if you give the hint "cards of red suit" then you have to give the position of both (red,1) and (red,2) i.e. index 0 and 2. 
 You cannot give an "empty hint" like "there are no green cards".
