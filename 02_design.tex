@@ -77,7 +77,8 @@ Cons: Spents a lot more bits than strictly necessary to represent a world.
 
 
 \subsubsection{Choosing a representation}
-All representations have a convincing set of of tradeoffs. I decided to go with the table representation, since it is very generalizable for other aspects of the game, as well as easy to work on directly, as well as generate, see section \ref{sec:efficient-generation-of-hands}. But the other representations should definitely be kept in mind if memory proves to be a problem in practice.
+All representations have a convincing set of of tradeoffs. I decided to go with the table representation, since it is very generalizable for other aspects of the game (i.e. can be used to represent decks, piles etc.), as well as easy to work on directly, as well as generate, see section \ref{sec:efficient-generation-of-hands}. 
+But the other representations should definitely be kept in mind if memory proves to be a problem in practice.
 
 
 \subsection{Generating hands in an efficient way} \label{sec:efficient-generation-of-hands}
@@ -137,11 +138,12 @@ Then we decrement the most signficant digit and get Figure \ref{fig:decrement}.
 A more formalized algorithmic approach will be described in the implementation chapter.
 
 
-\subsection{How should an agent play?}
+\subsection{How should an agent play?} \label{sec:how-should-an-agent-play}
 
 How an agent should play based on its knowledge in its DEL model is heavily inspired by \cite{CoxEtAl2015}, specifically the "information strategy". 
 In it they distinguish between \emph{public and private information}. Where public information is what everybody knows, and everybody knows that everybody knows that etc. And private information, is what an agent individually knows based on the other players hands. This can be compared to DEL where public information is what the model guarantees is common knowledge, and private information is simply queries that holds true for all possible worlds from that agents POV.
-In my solution I will only look at private information, but it is an interesting problem to see how one can adapt the model I have described into something that can answer common knowledge queries.
+
+In my solution I will only look at private information, but it is an interesting problem to see how one can adapt the model I have described into something that can answer common knowledge queries, especially given that \cite{CoxEtAl2015} information strategy makes use of common knowledge.
 
 In order to decide what an agent should do in a specific situation, I borrow terminology from \cite{CoxEtAl2015} again. So given a hand, which is a ordered set of known or unknown cards, how does an agent know what card to play?
 
@@ -195,5 +197,11 @@ we see that there are 4 permutation that matches $o_{hints}$:
 
 Then for each permutation we can decide the actionable states of each card, based on the permutation and the current state of the game. For instance, let us assume that the red color pile in the current state of the game has a 4 on top. This means that the card in position 0 can both be playable (if it is a (red,5)). But it is also unplayable (i.e. if it is a (red,1)). Since we can't know for sure based on our knowledge, then we cannot perform action 1 in the action algorithm.
 
-Generating permutations can be done using Heap's algorithm \cite{wiki:heapsalgorithm}, which seem to be fast and not need that much extra data in order to compute. 
+
+
+\todo[inline]{probably better to mention in implementation} 
+Generating permutations can be done using Heap's algorithm \cite{wiki:heapsalgorithm}, which seem to be fast and not need that much extra data in order to compute the permutations. 
+
+\subsection{Removing other players possible worlds based on their hints} \label{sec:design:removing-worlds-based-on-hints}
+When a player $p$ has their model $\POVModel_p$, then for some player $b$, there are some possible worlds which player $p$ cannot rule out are possible for $b$, therefore they are generated as well. But if this generation is only based on the cards revealed then there will be some possible worlds which conflict with the hints given to $b$, therefore we can also go through all possible worlds for $b$ and remove any that are in conflict with their hints. This can be done in much the same way as described in section \ref{sec:how-should-an-agent-play}, where we use permutations of a possible world to see if any permutation matches the hints.
 
