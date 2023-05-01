@@ -8,6 +8,7 @@
 \item Discuss alternatives and motivate your choice.
 \end{itemize}
 }
+
 \newcommand{\POVModel}{\mathcal{M}}
 
 % \subsection{Representing a card and deck compactly}
@@ -135,8 +136,7 @@ Then we decrement the most signficant digit and get Figure \ref{fig:decrement}.
 \end{figure}
 
 
-A more formalized algorithmic approach will be described in the implementation chapter.
-
+A more specific algorithmic description is given in section \ref{implementation:sec:generating-distinct-combinations}
 
 \subsection{How should an agent play?} \label{sec:how-should-an-agent-play}
 
@@ -145,10 +145,10 @@ In it they distinguish between \emph{public and private information}. Where publ
 
 In my solution I will only look at private information, but it is an interesting problem to see how one can adapt the model I have described into something that can answer common knowledge queries, especially given that \cite{CoxEtAl2015} information strategy makes use of common knowledge.
 
-In order to decide what an agent should do in a specific situation, I borrow terminology from \cite{CoxEtAl2015} again. So given a hand, which is a ordered set of known or unknown cards, how does an agent know what card to play?
+In order to decide what an agent should do in a specific situation, I borrow terminology from \cite{CoxEtAl2015} again. So given a hand, which is a  set of known or unknown cards, how does an agent know what card to play?
 
 
-% In order to decide what an agent should do in a specific situation, I borrow terminology from \cite{CoxEtAl2015} again. So given a hand, which is a ordered set of known or unknown cards
+% In order to decide what an agent should do in a specific situation, I borrow terminology from \cite{CoxEtAl2015} again. So given a hand, which is a a set of known or unknown cards
 
 % However the private information my agents got is not the tables defined in \cite{CoxEtAl2015}, but the DEL model described in section \ref{sec:model-access}. The action algorithm for the information strategy is as follows (most of it cited directly from \cite{CoxEtAl2015}):
 
@@ -167,7 +167,7 @@ Firstly I will have to decide \emph{when} a card should be played, discarded etc
 
 Here implicitly "playable card", "dispensible card", "dead card", "it is a duplicate", are epistemic queries on the $\POVModel_p$ for the current playing player $p$'s hand. So how would an agent go about trying to decide whether a card is playable, discardable, dead, a duplicate or dispensible? Let's denote each of these the cards \emph{actionable states}.
 
-I define the actionable states is as follows (also based on \cite{CoxEtAl2015}):
+I define the actionable states as follows (also based on \cite{CoxEtAl2015}):
 \begin{itemize}
 	\item Playable: If it is able to be played in the current game state.
 	\item Dead: If the card has already been played and is not needed anymore.
@@ -175,18 +175,18 @@ I define the actionable states is as follows (also based on \cite{CoxEtAl2015}):
 	\item Duplicate: There exists duplicate in another players hand.
 \end{itemize}
 
-The problem with deciding actionable states for the cards is that we have stored each world as a set, and since a set ignores order of the cards, then even if we find hands with several actionable states in the model, we still have to find a mapping between the set and the ordered list that is the concrete hand that the agent is playing with.
-So for the agent's POV, the hand the player has can be viewed as an ordered list of what is hinted about the agent's cards. What is known about a card can be denoted by a pair: its suit, and its value. 
+The problem with deciding actionable states for the cards is that we have stored each world as a set, and since a set ignores order of the cards, then even if we find hands with several actionable states in the model, we still have to find a mapping between the set and the list that is the concrete hand that the agent is playing with.
+So for the agent's POV, the hand the player has can be viewed as an list of what is hinted about the agent's cards. What is known about a card can be denoted by a pair: its suit, and its value. 
 
-As an example: If I have the hand ((red,1),(blue,3),(red,2),(yellow,3)), and the current state of the game I have only my red cards hinted, then the ordered list $o_{hints}$ is (red,unknown),(unknown,unknown),(red,unknown),(unknown,unknown).
+As an example: If I have the hand ((red,1),(blue,3),(red,2),(yellow,3)), and the current state of the game I have only my red cards hinted, then the list $o_{hints}$ is (red,unknown),(unknown,unknown),(red,unknown),(unknown,unknown).
 
-In order to create the mapping from a set in a world to an ordered list that matches the hand indices, we have to take the hints given to player $p$ into account.
-So given an unknown hand for player $p$ specified with the ordered list of hints $o_{hints}$, and the model $\POVModel_p$ we have to decide what possible actionable states is in each card. 
+In order to create the mapping from a set in a world to an list that matches the hand indices, we have to take the hints given to player $p$ into account.
+So given an unknown hand for player $p$ specified with the list of hints $o_{hints}$, and the model $\POVModel_p$ we have to decide what possible actionable states is in each card. 
 
-For each possible world for $p$, there is a specific hand for $p$, denoted $h_{specific}$. Since each hand is stored as a set, we have to use the hints $o_{hints}$ to figure out how the set should be mapped to ordered list. How this can be done is to make $h_{specific}$ into any ordered list $o_{specific}$ and subsequently take all permutations of $o_{specific}$ and see which ones matches the $h_{hints}$. If it is possible to find any permutation that is non-contradictory with $o_{hints}$ then we can decide the actionable states for each card given by $h_{specific}$.
+For each possible world for $p$, there is a specific hand for $p$, denoted $h_{specific}$. Since each hand is stored as a set, we have to use the hints $o_{hints}$ to figure out how the set should be mapped to a list. How this can be done is to make $h_{specific}$ into any list $o_{specific}$ and subsequently take all permutations of $o_{specific}$ and see which ones matches the $h_{hints}$. If it is possible to find any permutation that is non-contradictory with $o_{hints}$ then we can decide the actionable states for each card given by $h_{specific}$.
 
 Continuing the previous example. We might have the set \[h_{specific} = \{(green,1),(red,5),(green,2),(red,1)\}\]
-Turning this into an ordered list 
+Turning this into an list 
 \[o_{specific} = ((green,1),(red,5),(green,2),(red,1))\]
 we see that there are 4 permutation that matches $o_{hints}$:
 
@@ -197,10 +197,7 @@ we see that there are 4 permutation that matches $o_{hints}$:
 
 Then for each permutation we can decide the actionable states of each card, based on the permutation and the current state of the game. For instance, let us assume that the red color pile in the current state of the game has a 4 on top. This means that the card in position 0 can both be playable (if it is a (red,5)). But it is also unplayable (i.e. if it is a (red,1)). Since we can't know for sure based on our knowledge, then we cannot perform action 1 in the action algorithm.
 
-
-
-\todo[inline]{probably better to mention in implementation} 
-Generating permutations can be done using Heap's algorithm \cite{wiki:heapsalgorithm}, which seem to be fast and not need that much extra data in order to compute the permutations. 
+Of course this method focuses on what can certainly be known, so if index 2 on the hand cannot be "playable" in all possible worlds, then it will not be played, but it is not unthinkable to use the possible worlds as a sort of probability, and if most of these worlds, we find that we can play index 2, then it is probably successful idea. But I will focus on what an agent can know with certitude and therefore I define a card to be "playable" if it is playable in all possible worlds.
 
 \subsection{Removing other players possible worlds based on their hints} \label{sec:design:removing-worlds-based-on-hints}
 When a player $p$ has their model $\POVModel_p$, then for some player $b$, there are some possible worlds which player $p$ cannot rule out are possible for $b$, therefore they are generated as well. But if this generation is only based on the cards revealed then there will be some possible worlds which conflict with the hints given to $b$, therefore we can also go through all possible worlds for $b$ and remove any that are in conflict with their hints. This can be done in much the same way as described in section \ref{sec:how-should-an-agent-play}, where we use permutations of a possible world to see if any permutation matches the hints.

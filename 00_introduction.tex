@@ -17,7 +17,7 @@ Looking into these strategies in detail, I reckon that these strategies are not 
 Other solutions utilize dynamic epistemic logic \cite{EgerAndMartens17}, that can very declaratively specify goals and try to find shortest paths in order to satisfy these goals. However it was difficult for me to judge the quality of the solution, given that Eger and Martens write in the code repository \cite{Ostari} that due to an issue in the initialization of the game, results are misleading. 
 There are also machine-learning oriented solutions to this problem, that nowadays seem to be on-par with the rule-based ones, but I know terribly little about machine-learning, so I will refer to such articles as \cite{hu2021otherplay} achieving average score of $24.09$.
 
-In this article describe my solution based on principles of epsitemic dynamic knowledge, with emphasis on knowledge about ones hand, in order to make a group of agents work together and attempt to score as many points as possible in Hanabi. 
+In this article I will describe my solution based on principles of epsitemic dynamic knowledge, with emphasis on knowledge about ones hand, in order to make a group of agents work together and attempt to score as many points as possible in Hanabi. 
 
 The choice of implementation language is Zig \cite{Ziglang}, a new C-like language with a nice set of tradeoffs, mainly due to personal interest, but also that, in my experiece, imperative and memory focused languages give rise to some interesting optimizations. 
 

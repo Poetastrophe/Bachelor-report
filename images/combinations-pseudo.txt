@@ -1,0 +1,26 @@
+function distinct_combinations(taken_into_account: array of size 25, 
+ distinct_pool: array of size 25, 
+ sum_array: array of size 25, 
+ cross_sum: u64, 
+ current_id: usize, 
+ accumulator: growable array) {
+    if (cross_sum == 0) {
+        acc.append(taken_into_account) 
+        return;
+    }
+
+    take = math.min(distinct_pool[current_id], k); 
+
+    for(int i = 0; i<take+1; i+=1){
+            taken_into_account[current_id] = take - i;
+            if (sum_array[current_id + 1] < k - (take - i)) {
+                return;
+            }
+            distinct_combinations(taken_into_account, 
+	     distinct_pool, 
+	     sum_array, 
+	     cross_sum - (take - i), 
+	     current_id + 1, acc);
+     }
+}
+

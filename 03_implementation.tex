@@ -13,11 +13,65 @@ components.
 
 
 \subsection{Going through all permutations}
-In sections \ref{sec:how-should-an-agent-play} and \ref{sec:design:removing-worlds-based-on-hints}, a key thing that has to be done in order to evaluate whether a hand with unknown cards but with some hints is part of a possible world, and defining each cards actionable states is through checking the permutations of a possible world.
-Generating permutations can be done using Heap's algorithm \cite{wiki:heapsalgorithm}, which seem to be fast and not need that much data in order to compute the permutations. If there are $k$ objects, you only need to store $O(k)$ elements. My implementation is in "{\tt src/multi\_agent\_solvers/PermutationIterator.zig}". 
+In sections \ref{sec:how-should-an-agent-play} and \ref{sec:design:removing-worlds-based-on-hints}, I described how to respectively how an agent might know what to do with their cards and how to remove worlds based on hints. A crucial aspect of both of these procedures is that we need a permutation generation method.
+Generating permutations can be done using Heap's algorithm \cite{wiki:heapsalgorithm}, which seem to be fast and not need that much data in order to compute the permutations. If there are $k$ objects that you want to find the permutations of, you only need to maintain some auxilliary arrays of size $O(k)$. My implementation is in "{\tt src/multi\_agent\_solvers/PermutationIterator.zig}". 
+
+
+\subsection{Generating distinct combinations of size $k$} \label{implementation:sec:generating-distinct-combinations}
+Continuing the section \ref{sec:efficient-generation-of-hands}, I wanted to generate all distinct combinations from a set of elements (where some are duplicates). The approach I found is best described with the pseudo-code in Code listing \ref{code:distinct-combinations}. 
+
+It takes a array {\tt  taken\_into\_account} in which initially all elements are 0, which, when filled with {\tt cross\_sum} number of elements will represent a hand. {\tt distinct\_pool} which represents the set from which the $k$ distinct combinations will be generated from. {\tt sum\_array} is a suffix-sum array of the initial {\tt distinct\_pool}. {\tt cross\_sum} which is initially the same as $k$. {\tt current\_id} is which element is being considered to be added to the hand and finally {\tt accumulator} stores all the distinct combinations.
+
+As an example, for generating all distinct combinations of $k=4$ from the card-pool array in Figure \ref{fig:hand-pool-table}. Then the {\tt distinct\_pool} array would be equivalent to the card pool row (except for the "Total" column). And the suffix-sum array {\tt sum\_array} would be
+\[
+[50, 47, 45, 43, 41, 40, 37, 35, 33, 31, 30, 27, 25, 23, 21, 20, 17, 15, 13, 11, 10, 7, 5, 3, 1, 0]
+\]
+
+The suffix-sum array is an optimization, that I found gave significant speedup when implementing this generation method.
+
+
+
+\begin{verbbox}
+function distinct_combinations(
+ taken_into_account: integer array consisting of 25 elements, 
+ distinct_pool: integer array consisting of 25 elements, 
+ sum_array: integer array consisting of 25+1 elements, 
+ cross_sum: integer, 
+ current_id: index, 
+ accumulator: growable array) {
+    if (cross_sum == 0) {
+        acc.append(taken_into_account) 
+        taken_into_account[current_id] = 0;
+        return;
+    }
+
+    take = math.min(distinct_pool[current_id], k); 
+
+    for(int i = 0; i < take + 1; i = i + 1){
+            taken_into_account[current_id] = take - i;
+            if (sum_array[current_id + 1] < k - (take - i)) {
+		taken_into_account[current_id] = 0;
+                return;
+            }
+            distinct_combinations(taken_into_account, 
+	     distinct_pool, 
+	     sum_array, 
+	     cross_sum - (take - i), 
+	     current_id + 1, acc);
+     }
+     taken_into_account[current_id] = 0;
+}
+\end{verbbox}
+{\centering
+\fbox{\theverbbox}
+\captionof{Code}{Pseudo code for the hand-generation method. It is assumed that arrays are taken by reference and integer/indices are called via copy}\par
+\label{code:distinct-combinations}
+}
+
+
 
 \subsection{Representing the world}
-I mentioned that I picked the table representation from the different choices I had (see section \ref{sec:representing-a-world}), but I was not aware, at the time, of how byte-addressability would affect the actual space, so I was surprised that the space was filled up so quickly. There are ways to mitigate these problems of space by using porting the current encoding of 25 bytes, to make a packed array that uses bitmanipulation in order to achieve this \footnote{Zig has this in its library \cite{packed_int_array}}. Due to time constraints I chose to have only 1 agent with 1 model at a time, so that the agents in total do not use too much memory.
+I mentioned that I picked the table representation from the different choices I had (see section \ref{sec:representing-a-world}), but I was not aware, at the time, of how byte-addressability would affect the actual space, so I was surprised that the space was filled up so quickly. There are ways to mitigate these problems of space by using porting the current encoding of 25 bytes, to make a packed array that uses bitmanipulation in order to achieve this \footnote{Zig has this in its library called packed int array \cite{zigpackedintarr}}. Due to time left to finish up this product I chose to have only 1 agent with 1 model at a time, so that the agents in total do not use too much memory.
 
 \subsection{Implementing the board game}
 I also implemented the board game, simply referred to as the Game struct (in file "{\tt src/hanabi\_board\_game.zig}) in order for the agents to interact with the game. The board game keeps track on who is the current player and has some simple methods that the agents can use when they want to make a move:
@@ -42,4 +96,10 @@ An Agent has a hand that is represented with {\tt CardWithStates}, here the stat
 \end{sidewaysfigure}
 
 \subsection{Game simulation runner}
-The glue-code between the Agents and the Game classes, is a class called SimulationRunner (defined in "{\tt src/ai\_simulation\_runner.zig}"), which takes a Game
+The glue-code between the Agents and the Game classes, is a class called SimulationRunner (defined in "{\tt src/ai\_simulation\_runner.zig}"), which takes a fully initialized Game and on-demand generates the agents and their epistemic models, and simulates a course of a game. See Figure \ref{fig:SimulationRunner-class-diagram} for the components making up the game simulater. The Game class has an element of randomness (in order to simulate random draws), so a seed can be provided when initializing the game in order to facilitate reproducability.
+
+\begin{figure}
+	\includegraphics[width=13cm]{images/simulationrunner-uml-class-diagram.png}
+	\caption{Low-fidelity class diagram for the things making up the SimulationRunner class}
+	\label{fig:SimulationRunner-class-diagram}
+\end{figure}

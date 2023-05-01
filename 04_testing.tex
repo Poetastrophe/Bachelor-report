@@ -9,5 +9,12 @@ implementation.
 \end{itemize}
 }
 
+\subsection{Testing my game implementation by making an interactive interface}
 
+in {\tt src/cli\_simulation\_runner.zig} I made a made TUI application of the game, in order to inspect what would have if a specific action was executed, and whether it made sense. I guess it can be called a type of white box testing, since I am able to reproduce what happens if something fails.
 
+\todo[inline]{Make the program have different compile arguments, in order to facilitate, like, how to run the runner? etc}
+\todo[inline]{Make install instructions on zig so that the user can run my program.}
+
+\subsection{Test system}
+Making use of the fact that zig optimizes branches away, that it will know in compile-time will never run, I made an ad-hoc testing system. Because there were some things I would like to continually inspect. and Were hard to inspect without modifying the code. I.e. whiteboxtesting.
