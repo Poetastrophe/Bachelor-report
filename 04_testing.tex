@@ -8,13 +8,44 @@
 implementation.
 \end{itemize}
 }
+\subsection{Unit testing}
+I did some unit-testing in the project, which is directly integrated with the Zig language, in the form that you simply write the unit tests in the source files themselves. 
+
+For things with few dependencies, like the {\tt CardSet} class, the generator methods, or printing methods, they are easy to verify and unit-tests helps that these basic methods/classes can be relied on. But of course, unit-testing becomes signifcantly harder when you have to combine more components. For instance, when testing whether the generated worlds are correct, I would have to compare it to something much simpler. In this case I tried to adapt my methods in order to make it match the three wise men problem, and then I would visually inspect it myself to see whether it was correct, this is done in the file {\tt src/multi\_agent\_solvers/agent.zig} in the test called "Three wise men simulation".
+
+Furthermore unit-testing is pretty crucial when working with manual memory management languages as Zig, since the risk of orphaned memory is much more severe, and Zig facilitetes prevention of memory leaks by detecting this in its unit tests. 
+
+
+\subsection{Early feasibility test}
+After implementing an encoding for a world, I decided to make a feasibility test, whether it was realistic generating the possible worlds for hanabi. The test is in {\tt src/bigtest.zig}. From it I got tried changing the seed a couple of times and found the RAM usage was between 5-10GB per model, and it took about 20-120 seconds to generate this. But this is of course without running any algorithms that checks the worlds for some property.
+\todo[inline]{Get some actual numbers}
+From this early testing I decided it would not be completely infeasible to try to tackle the full 50-deck version of Hanabi, with 5 players.
 
 \subsection{Testing my game implementation by making an interactive interface}
-
-in {\tt src/cli\_simulation\_runner.zig} I made a made TUI application of the game, in order to inspect what would have if a specific action was executed, and whether it made sense. I guess it can be called a type of white box testing, since I am able to reproduce what happens if something fails.
+I wanted to test the the {\tt Game} class, to see if anything unexpected happened if some specific set of action occurs. In order to do this, instead of manually making some unit tests, I implemented a TUI interface of the game and tried various things in order to "break" the {\tt Game} implementation. This is a sort of white-box testing where I also can try to reevaluate if the interfaces I have implemented have some oversight. The TUI interface is in {\tt src/cli\_simulation\_runner.zig}.
 
 \todo[inline]{Make the program have different compile arguments, in order to facilitate, like, how to run the runner? etc}
 \todo[inline]{Make install instructions on zig so that the user can run my program.}
 
-\subsection{Test system}
-Making use of the fact that zig optimizes branches away, that it will know in compile-time will never run, I made an ad-hoc testing system. Because there were some things I would like to continually inspect. and Were hard to inspect without modifying the code. I.e. whiteboxtesting.
+\subsection{Ad-hoc test-inspection system}
+Making use of the fact that zig optimizes dead branches away, if known at compile-time will never be executed, I made an ad-hoc white-box testing system. Because there were some things I would like to continually inspect. This is done using a file that contain some global-accessable flags: {\tt src/multi\_agent\_solvers/globals\_test.zig}.
+
+So what I mean that it optimizes away dead branches is that, given the pseudo-code at \ref{code:statically-removing-branches}, we see that we have an additional branch in the complicated function, which is only used for testing/inspection purposes, but this branch will be removed at compile-time if it is known that {\tt globals.check\_kripkestructure=false} on compile time.
+
+This way I can make the ad-hoc testing system that inspects the code, without sacrificing performance when compiling to the actual executable.
+
+\begin{verbbox}
+function some_complicated_function(game, kripkestructure):
+    if(globals.check_kripkestructure){
+        for each element in kripkestructure{
+            print(element)
+        }
+    }
+    // function continues to do other work
+}
+\end{verbbox}
+{\centering
+\fbox{\theverbbox}
+\captionof{Code}{An example of how globals are used for testing}\par
+\label{code:statically-removing-branches}
+}

@@ -3,6 +3,8 @@
 
 
 
+
+
 \usepackage{verbatimbox,caption,float,lipsum}
 \usepackage{float}
 \usepackage{listings}
@@ -23,66 +25,87 @@
 \newfloat{Code}
 \captionsetup{Code}
 
+
+\usepackage[left=3.5cm,right=3.5cm,top=3cm,bottom=3cm]{geometry}  % for page size and margin setting
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\pagestyle{fancy}
+
+\fancyfoot{}
+% \fancyhf{}
+% \lhead{Bachelor project}
+%\lhead{rettes nederst under opsætning/pakker}
+% \rhead{Modal logic}
+\rfoot{Page \thepage{} of \pageref{LastPage}}     % page number out of pages
+% \lfoot{\today}                                  % gives date 
+
 % \newcommand{\typenaturalnumbers}{\mathbb{N}_0}
 
 % \usepackage{natbib}
 
-\title{Bachelor report}
-\author{s174256 }
-\date{February 2023}
+\title{Bachelor report:Using modal logic and compact data representations to solve the Hanabi card game}
+\author{Christoffer Danborg Irvall (s174256) }
+\date{\today}
 
 \begin{document}
 
-\ninanotes{
-The form and content of a report depend on a number of things:
-\begin{itemize}
-\item The subject/problem the report deals with.
-\item The role of the author (observer, solver, advisor).
-\item The report can be an instruction manual, a maintenance manual, a guide to repeat a process, etc.
-\item The target audience (level of pre-knowledge, is shallow or deep information required).
-\item Are there different target groups needing different information?
-\item Physical restrictions (size, media used, etc).
-\end{itemize}
+% \ninanotes{
+% The form and content of a report depend on a number of things:
+% \begin{itemize}
+% \item The subject/problem the report deals with.
+% \item The role of the author (observer, solver, advisor).
+% \item The report can be an instruction manual, a maintenance manual, a guide to repeat a process, etc.
+% \item The target audience (level of pre-knowledge, is shallow or deep information required).
+% \item Are there different target groups needing different information?
+% \item Physical restrictions (size, media used, etc).
+% \end{itemize}
 
-\mytodonswer{
-	\begin{itemize}
-\item Hanabi complexity, optimization and zig
-\item Solver
-\item Design and implementation decisions
-\item The level of preknowledge should be basic computerscience knowledge, basic algorithms, basic compiler knowledge.
-\item no, just CS professors
-\item 20 pages it seems like :)
-	\end{itemize}
+% \mytodonswer{
+% 	\begin{itemize}
+% \item Hanabi complexity, optimization and zig
+% \item Solver
+% \item Design and implementation decisions
+% \item The level of preknowledge should be basic computerscience knowledge, basic algorithms, basic compiler knowledge.
+% \item no, just CS professors
+% \item 20 pages it seems like :)
+% 	\end{itemize}
 
-}
+% }
 
-What to document?:
-\begin{itemize}
-	\item What is the problem to be solved?
-	\item Is the problem specified well enough? Otherwise find a sound,
-unambiguous definition.
-\item What is needed to solve the problem?
-\item How is the solution structured?
-\item How is the solution implemented?
-\item What impact will the solution have on whom?
-\end{itemize}
+% What to document?:
+% \begin{itemize}
+% 	\item What is the problem to be solved?
+% 	\item Is the problem specified well enough? Otherwise find a sound,
+% unambiguous definition.
+% \item What is needed to solve the problem?
+% \item How is the solution structured?
+% \item How is the solution implemented?
+% \item What impact will the solution have on whom?
+% \end{itemize}
 
-Problemanalysis
-\begin{itemize}
-\item Check whether the given problem description is clear and the goal is
-well-defined and unambiguous.
-\item Make a problem description which meets these requirements. Have the
-reader in mind, not only the writers.
-\item If needed, invent your own terms to make the description clear, BUT
-describe them to the reader (e.g., in a glossary), not just use them.
-When the original description is vague, this requires a drop in
-abstraction when concretising.
-\item In the same way formulate the goal(s) and the conditions when a goal is
-reached.
-\end{itemize}
-}
+% Problemanalysis
+% \begin{itemize}
+% \item Check whether the given problem description is clear and the goal is
+% well-defined and unambiguous.
+% \item Make a problem description which meets these requirements. Have the
+% reader in mind, not only the writers.
+% \item If needed, invent your own terms to make the description clear, BUT
+% describe them to the reader (e.g., in a glossary), not just use them.
+% When the original description is vague, this requires a drop in
+% abstraction when concretising.
+% \item In the same way formulate the goal(s) and the conditions when a goal is
+% reached.
+% \end{itemize}
+% }
 
-\maketitle
+% \maketitle
+% {\centering
+% {
+% 	\large
+% Bachelor project advisor: Nina Gierasimczuk
+% }
+% }
+\include{frontpage.tex}
 \newpage
 \tableofcontents
 \include{00_introduction.tex}
