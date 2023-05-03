@@ -90,7 +90,7 @@ The logical agents in the game are implemented as an Agent struct. See a class d
 An Agent has a hand that is represented with {\tt CardWithStates}, here the states refer to each cards actionability (related to section \ref{sec:how-should-an-agent-play}), but also its hints. It does not see the actual cards. It has a {\tt KripkeStructure} which is its epistemic model. And lastly it has a {\tt CurrentPlayerView} which is the current game that the agent as a player is able to see i.e. it cannot see its own hand, or the contents of the deck. An Agent has a method called {\tt init(...)}, that based on the view and which player it is, is able to generate the entire model, as well as decide what states the {\tt CardWithStates} should be in. After an Agent has been {\tt init}ed it can make a move with the method {\tt make\_move(game)}, which modifies the game based on its {\tt hand}, as well as its view.
 
 \begin{sidewaysfigure}
-\includegraphics[width=23cm]{images/agent-uml-class-diagram.png}
+\includegraphics[width=22cm]{images/agent-uml-class-diagram.png}
 	\caption{Low-fidelity class diagram for the things making up the Agent class}
 	\label{fig:Agent-class-diagram}
 \end{sidewaysfigure}

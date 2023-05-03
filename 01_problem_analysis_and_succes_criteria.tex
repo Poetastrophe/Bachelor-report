@@ -20,79 +20,35 @@ The setup I am gonna run the self-play of the agents on is utilizes an Intel® C
 In regards to time constraint I want to make have that each agent does not spent much more time than a real-time player. A couple of minutes at most - but this goal is less important, but mostly there to secure that it is actually testable.
 The chosen setup and time and memory constraints is mainly due to that is the computer I got, and I now I can iterate fast over a setup I have full control over.
 
+\subsection{Multi-modal logic of \KTfourfiveN} \label{sec:definition-ktfourfiven}
+In this problem I will have to use modal logic in order to solve the game of Hanabi. Modal logic is a field with a lot of depth and even notions like 'epistemic actions' can become part of the model\footnote{like \cite{EgerAndMartens17} logical system called Ostari}. I will chiefly focus on knowledge (what can be known) and what can be considered possible given the information an agent has. An approach to this is using \KTfourfiveN \cite{HuthAndRyan2004KT45n}, which seem flexible enough to adapt to the game. For completion, I put forward their definition of \KTfourfiveN in Figure \ref{fig:kt45n-definition}. 
 
-\subsection{A motivation for the solution: Three wise men puzzle}\label{sec:motivation}
-In order to motivate my approach to the problem, namely multi-modal logic. 
-I will take the example of the three wise men problem.
-There are three wise men, each standing in a row, enumarated 1 through 3. 
-Then a king, who has 3 red hats and 2 white hats puts a hat on each of the three wise men in such a way that each person does not know the color of the hat on their head. 
-Then the king asks the first wise man whether he knows the color of their own hat, where the answer could either be "I don't know" or "I know". 
-He then asks the same of the second, then the third.
+To give a corrospondance to the Hanabi game, the world $w \in W$ will corrospond to some configuration of hands for all the players, and the deck, discard pile and color piles. Some equivalence relation $R_i = (w_x,w_y)$ means that player $i$ thinks that both $w_x$ and $w_y$ are possible based on the given information. And using the labelling function $L(w_k)$ could contain atoms like, "the first card in player $p$'s hand is able to be played" for world $w_k$, so it can be used to answer queries. 
 
-Let us say that the actual case is RRR i.e. wise man 1, 2 and 3 has a red hat on their head.
-In that case wise man 1 will answer: I don't know, the second wise man will answer: I don't know, but the third wise man will answer: I know, how so?
+Of course finding a good encoding for the worlds, such that it is easy to answer queries, as well as traversing the model in order to answer epistemic queries is no trivial task, and one might use a different encoding for a world than one strictly consisting of atoms (or booleans).
 
-Trying to see the problem from the third wise man's perspective I have illustrated a model at Figure \ref{fig:twm-round-0}. It is based on \KTfourfiveN in \cite{HuthAndRyan2004KT45n}, but breaks with convention used by them in the following way:
-The model is strictly from the perspective of wise man 3. So for each possible world of wise man 3, we "fix" this world and then imagine what the other wise men could think was possible based on this. An edge with label x means that wise man x knows this is possible, based on the fixed world of wise man 3.
+
+
+
 
 \begin{figure}
-	\begin{minipage}[c]{3cm}
-\includegraphics[width=4cm]{images/three_wise_men_round_0.png}
-	\caption{The initial model for the third wise man, with no other information than what he can see}
-
-	\label{fig:twm-round-0}
-\end{minipage}
-\hfill
-	\begin{minipage}[c]{3cm}
-	\includegraphics[width=4cm]{images/three_wise_men_round_1.png}
-	\caption{The model for the third wise man, after wise man 1 has said "I don't know"}
-
-	\label{fig:twm-round-1}
-\end{minipage}
-\hfill
-	\begin{minipage}[c]{3cm}
-	\includegraphics[width=4cm]{images/three_wise_men_round_2.png}
-	\caption{The model for the third wise man, after both wise man 1 and two have said "I don't know", in succession.}
-
-	\label{fig:twm-round-2}
-\end{minipage}
+	\centering
+\includegraphics[width=13cm,frame]{images/kt45n-definition.png}
+	\caption{Definition of \KTfourfiveN from \cite{HuthAndRyan2004KT45n}}
+	\label{fig:kt45n-definition}
 \end{figure}
 
 
 
-Figure \ref{fig:twm-round-0} is the model for the initial configuration. This means that wise man 3 does not know whether he has a red hat or a white hat. And for each of these scenarios he can imagine that 2 cannot know either, and neither can 1. I will refer to scenarios that are fixed from a particular player's POV for \emph{fixed scenarios}. So here the fixed scenarios are RRR and RRW with respect to wise man 3's model.
-
-When 1 states "he does not know" then that has to be equivalent to "not RWW is the case". This means that three can safely eliminate this state, as something 2 would imagine, given that this was a public announcement. This results in the updated model in Figure \ref{fig:twm-round-1}.
-
-After 2 answers "I don't know", wise man 3 can deduce that the case was not RRW, since if it was the case, then 2 would have seen 1:R and 3:W and know that RRW was the only scenario in which this was possible, and hence would answer "I know". Which means that the final model that wise man three has is the one on Figure \ref{fig:twm-round-2}, for which the wise man 3 will know with certainty that the only scenario which is possible is RRR.
-
-
-\subsection{Description of how modal logic is applied} \label{sec:description-of-how-modal-logic-is_applied}
-Without worrying too much about the combinatorial explosion (more on that later), we can apply the principles described in chapter \ref{sec:motivation} to Hanabi. 
-
-So analogously instead of looking at a world as a set of hats, we look at a world as a set of hands. And likewise we can have multiple \emph{fixed scenarios} with respect to the model of the player and imagine what the other players could imagine based on this fixation. 
-
-More formally, it is clear that any collection of cards can be represented as a multiset of cards (because there might be duplicates of the same card). This also means that we can define a \emph{hand} to be a multiset of cards. The same holds for the various piles and deck in the Hanabi game.  
-So for a player $p$ that wants to generate the set of possible worlds from her perspective and that of other players, will look at the following multisets:
-The initial full deck $S_{deck}$, the current discard pile $S_{discard}$, the current color piles $S_{color}$, the other players' hands $S_{op}$. 
-Then we can see that the set of possible hands she can generate must be taken from the multiset $S_{p} = S_{deck} \setminus S_{discard} \setminus S_{color} \setminus S_{op}$. 
-The set of hands for $p$ will then be based on the distinct combinations of size $k$ that we take from the multiset $S_{p}$.
-Here $k$ is 4 or 5 depending on the size of the hand.
-Each of these distinct combinations constitute a hand.
-Let us denote the set of hands for $p$ to be $\mathcal{H}_p$. The set $\mathcal{H}_p$ corrosponds to all the fixed scenarios in the model for player $p$.
-So for each element $h \in \mathcal{H}_p$, we will "fix" $h$ and generate for the other players their possible worlds, in much the same way as described above. So for a player $b$ that player $p$ wants to imagine possibilities about, we have that $S_{b} = S_{deck} \setminus S_{discard} \setminus S_{color} \setminus S_{op}'$. Where $S_{op}'$ is the set of the other players hands excluding player $b$'s hand and including $h$. 
-
 
 \subsection{Problems with possible worlds and modal logic}
-The problem with the approach of possible worlds described in chapter \ref{sec:description-of-how-modal-logic-is_applied}, is that we easily get combinatorial explosion. 
+The problem with the approach of modal logic and possible worlds, is that we easily get combinatorial explosion. 
 For some estimates on the number of possible hands for a single agent see Table \ref{table:combinations}.
 
 \begin{table}
 	\centering
 \begin{tabular}{l|llll}
 Number of players & 2       & 3       & 4       & 5      \\\hline
-Mean              & 83369.9 & 64134.8 & 11696.5 & 9190.4 \\
-Median            & 82956.5 & 61055.0 & 11759.0 & 8926.5 \\
 Min               & 65574   & 47666   & 7406    & 6676   \\
 Max               & 93667   & 83848   & 16316   & 12962 
 \end{tabular}
