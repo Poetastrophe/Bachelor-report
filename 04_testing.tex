@@ -11,9 +11,9 @@ implementation.
 \subsection{Unit testing}
 I did some unit-testing in the project, which is directly integrated with the Zig language, in the form that you simply write the unit tests in the source files themselves, under a "test" environment. 
 
-For things with few dependencies, like the {\tt CardSet} class, the generator methods, or printing methods, they are easy to verify and unit-tests helps that these basic methods/classes can be relied on. But of course, unit-testing becomes signifcantly harder when you have to combine more components. For instance, when testing whether the generated worlds are correct, I would have to compare it to something much simpler. In this case I tried to adapt my methods in order to make it match the three wise men problem, and then I would visually inspect it myself to see whether it was correct, this is done in the file {\tt src/multi\_agent\_solvers/agent.zig} in the test called "Three wise men simulation".
+For things with few dependencies, like the {\tt CardSet} class, the generator methods, or printing methods, they are easy to verify and unit-tests helps that these basic methods/classes can be relied on. But of course, unit-testing becomes significantly harder when you have to combine more components. For instance, when testing whether the generated worlds are correct, I would have to compare it to something much simpler. In this case I tried to adapt my methods in order to make it match the three wise men problem, and then I would visually inspect it myself to see whether it was correct, this is done in the file {\tt src/multi\_agent\_solvers/agent.zig} in the test called "Three wise men simulation".
 
-Furthermore unit-testing is pretty crucial when working with manual memory management languages as Zig, since the risk of orphaned memory is much more severe, and Zig facilitetes prevention of memory leaks by detecting this in its unit tests. 
+Furthermore unit-testing is pretty crucial when working with manual memory management languages as Zig, since the risk of orphaned memory is much more severe, and Zig facilitates prevention of memory leaks by detecting this in its unit tests. 
 
 
 \subsection{Early feasibility test for the world generation method}
@@ -21,13 +21,13 @@ After implementing the table encoding for a world, I decided to make a feasibili
 These numbers seem to well within the constraints defined in the Problem Analysis chapter and therefore I decided that it would be feasible to continue with the current solution. But of course I did not take into account how much time might actually be spent on querying and removing worlds, for more details on that see section \ref{sec:testing-kripkestructure-class}.
 
 \subsection{Testing my game implementation by making an interactive interface}
-I wanted to test the the {\tt Game} class, to see if anything unexpected happened if some specific set of action occurs. In order to do this, instead of manually making some unit tests, I implemented a TUI interface of the game and tried various things in order to "break" the {\tt Game} implementation. This is a sort of white-box testing where I also can try to reevaluate if the interfaces I have implemented have some oversight. The TUI interface is in {\tt src/cli\_simulation\_runner.zig}.
+I wanted to test the {\tt Game} class, to see if anything unexpected happened if some specific set of action occurs. In order to do this, instead of manually making some unit tests, I implemented a TUI interface of the game and tried various things in order to "break" the {\tt Game} implementation. This is a sort of white-box testing where I also can try to re-evaluate if the interfaces I have implemented have some oversight. The TUI interface is in {\tt src/cli\_simulation\_runner.zig}.
 
 \todo[inline]{Make the program have different compile arguments, in order to facilitate, like, how to run the runner? etc}
 \todo[inline]{Make install instructions on zig so that the user can run my program.}
 
-\subsection{Ad-hoc test-inspection system}
-Making use of the fact that zig optimizes dead branches away, if known at compile-time will never be executed, I made an ad-hoc white-box testing system. Because there were some things I would like to continually inspect. This is done using a file that contain some global-accessable flags: {\tt src/multi\_agent\_solvers/globals\_test.zig}.
+\subsection{Ad hoc test-inspection system}
+Making use of the fact that zig optimizes dead branches away, if known at compile-time will never be executed, I made an ad hoc white-box testing system. Because there were some things I would like to continually inspect. This is done using a file that contain some global-accessible flags: {\tt src/multi\_agent\_solvers/globals\_test.zig}.
 
 So what I mean that it optimizes away dead branches is that, given the pseudo-code at \ref{code:statically-removing-branches}, we see that we have an additional branch in the complicated function, which is only used for testing/inspection purposes, but this branch will be removed at compile-time if it is known that {\tt globals.check\_kripkestructure=false} on compile time.
 
@@ -50,10 +50,10 @@ function some_complicated_function(game, kripkestructure):
 }
 
 \subsection{Average score}
-The average score achieved through simulating 20 random games is 14.2, which means that the program is far from being as good as many existing solutions, but not a terrible score either in my own judgement. 
+The average score achieved through simulating 20 random games is 14.2, with lowest score of 12, and highest score of 17, which means that the program is far from being as good as many existing solutions.
 
 \subsection{Testing the {\tt KripkeStructure} class} \label{sec:testing-kripkestructure-class}
-The bulk of the work done by the program is {\tt KripkeStruture.init(...)} and {\tt Agent.updateCardStates(...)}. I will here mainly focus on the Kripkestructure generation, and also test the time of {\tt KripkeStructure.deinit()}, because I think that there might be a lot of time spent deallocating the structure as well.
+The bulk of the work done by the program is {\tt KripkeStruture.init(...)} and {\tt Agent.updateCardStates(...)}. I will here mainly focus on the {\tt Kripkestructure} generation, and also test the time of {\tt KripkeStructure.deinit()}, because I think that there might be a lot of time spent deallocating the structure as well.
 
 The {\tt KripkeStructure.init(...)} works in three steps
 \begin{enumerate}

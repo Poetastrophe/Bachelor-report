@@ -10,16 +10,41 @@
 % \end{itemize}
 % }
 
-I have made a product based on modal logic, in which each agent can deduce a big set of possibilites for the other agents (and itself), and it is able to look through each possible world to extract some property about each world. It can currently only deduce what is possible for ones own hand, and in the case that it somehow knows that a scenario leads to an "empty" possible world for another player, then that world is not possible. However there are currently no way for it to know this. Furthermore it lacks is epistemic queries like common knowledge. Common knowledge can be very useful when developing strategies since it can help them plan better when they target cards in \cite{CoxEtAl2015} information strategy. The modifications I made to the more general \KTfourfiveN leads to these type of queries are harder, since they are very strictly for a specific player's point of view. 
-The model I made has a compact array structure, which is nice for algorithms which look through each possible world.
-The current implementation has an average score of XX, which is far from the near-perfect strategies described in the introduction. The knowledge system I implement is orthogonal to most rule-based strategies, which means that you can take any rule-based strategy and incorporate the model in order to get better results.
+I have made a product based on a modified model of \SfiveN{}, denoted sub-\SfiveN{}, in which each agent can deduce a big set of possibilities for the other agents (and itself), and it is able to look through each possible world to extract some property about each world. The average score is 14.2 which is pretty far from many existing solutions. The memory-layout of sub-\SfiveN{} in the case of Hanabi, is quite simple, given that it is implemented using a 3-dimensional array, and each world spends only 25 bytes of memory, which are great for query algorithms that look through each world sequentially.  
+Further space was saved by making sure that each world stores a set of cards, instead of a list of cards, while still retaining the ability to answer queries about specific cards on a players hand.
 
-If there was more time an obvious idea would be to try to use the information-strategy described in \cite{CoxEtAl2015} as well as the "recommendation strategy" in combinations with my modal logic model, because each of these strategies also tell you something about the possible worlds, and therefore they can be used to eliminate possible worlds from a players knowledge base.
+If I had more time I would look into how public knowledge among the agents could be deduced from sub-\SfiveN{} model. Given that public knowledge is very useful for strategies like the information strategy in \cite{CoxEtAl2015}.
 
-If there was more time it would also be interesting to make a more general model, on which it would be possible to run "common knowledge" queries on \todo[inline]{Refer to the book on common knowledge queries}. As well as see if it would be possible to keep many of the benefits described in my model, like being mostly made of contiguous arrays, and fast iteration, compactness etc.  
+If I had more time, it would be interesting to see which strategies would work great in conjunction with the sub-\SfiveN{} model. For instance the two rule-based strategies described in \cite{CoxEtAl2015}, I would argue, works completely orthogonally to the sub-\SfiveN{} model solution, which means that both of these strategies could be combined with sub-\SfiveN{} model in order to make better decisions.
+In the case of the information strategy, then the information gained by encoding the moves could further modify each agent's model and thereby gain more information by using such a strategy. 
+Similarly if the recommendation strategy says one of your cards is "playable" then you can eliminate all worlds for which that card is not playable.
 
-If there was more time I would also like to look into how to optimize some aspects of the code, because right now there are a lot of redundant permutations \todo[inline]{refer to this in testing}, which unnecessary makes it spent more time trying to go through the possible worlds.
 
-In this project I learned a lot about modal logic, which strikes me as a good balance between using a powerful type of logic, as well as being pretty realistic to implement and execute. Although I feel like I have only dipped my toes into the subject, and there is a lot more depths that I have yet to explore.
 
-I also learned a lot about the programming language Zig, which has been a hobby-language of mine for quite a while, but I have not been able to test it on a project of this scale. Generally I would say that if you don't mind having to take responsibility for the memory, it is a language which gives a lot of power to a programmer who wants to experiment with data-representation and datastructures in general. Some aspects that would have been great to look into if I had more time would be multi-core programming using Zig, in order to optimize queries on the possible worlds.
+If there was more time I would also like to look into how to optimize some aspects of the code, because right now there are a lot of redundant permutations for each hand that are being checked, which makes it spent more time than necessary trying to go through the possible worlds.
+
+If I had more time, I would have made a more in-depth comparison of the data-representations of the worlds described in section \ref{sec:representing-a-world}, and see how they might have affected the performance.
+
+\todo[inline]{remember to also note the average time spent on each round, and the maximal amount of time and minumum}
+
+
+
+
+% It can currently only deduce what is possible for ones own hand, and in the case that it somehow knows that a scenario leads to an "empty" possible world for another player, then that world is not possible. However there are currently no way for it to know this. Furthermore it lacks is epistemic queries like common knowledge. Common knowledge can be very useful when developing strategies since it can help them plan better when they target cards in \cite{CoxEtAl2015} information strategy. The modifications I made to the more general \SfiveN{} leads to these type of queries are harder, since they are very strictly for a specific player's point of view. 
+
+% The model I made has a compact array structure, which is nice for algorithms which look through each possible world.
+% The current implementation has an average score of 14.2, which is far from the near-perfect strategies described in the introduction. The knowledge system I implemented is orthogonal to most rule-based strategies, which means that you can take any rule-based strategy and incorporate the model in order to get better results.
+
+% If there was more time an obvious idea would be to try to use the information-strategy described in \cite{CoxEtAl2015} as well as the "recommendation strategy" in combinations with my modal logic model, because each of these strategies also tell you something about the possible worlds, and therefore they can be used to eliminate possible worlds from a players knowledge base.
+
+% If there was more time it would also be interesting to make a more general model, on which it would be possible to run "common knowledge" queries on \todo[inline]{Refer to the book on common knowledge queries}. As well as see if it would be possible to keep many of the benefits described in my model, like being mostly made of contiguous arrays, and fast iteration, compactness etc.  
+In this project I learned a lot about modal logic, which strikes me as a good balance between using a powerful type of logic, as well as being pretty realistic to implement with reasonable performance. Although I feel like I have only dipped my toes into the subject, and there is a lot more depths that I have yet to explore.
+
+I also learned a lot about the programming language Zig, which has been a hobby-language of mine for quite a while, but I have not been able to test it on a project of this scale. Generally I would say that if you don't mind having to take responsibility for the memory, it is a language which gives a lot of power to a programmer who wants to experiment with data-representation and data structures in general. Some aspects that would have been great to look into if I had more time would be multi-core programming using Zig, in order to optimize queries and even generation of the possible worlds.
+
+\todo[inline]{Maybe this should go in further work rather than here}
+Of course this method focuses on what can certainly be known, so if index 2 on the hand cannot be "playable" in all possible worlds, then it will not be played, but it is not unthinkable to use the possible worlds as a sort of probability, and if most of these worlds, we find that we can play index 2, then it is probably successful idea. But I will focus on what an agent can know with certitude and therefore I define a card to be "playable" if it is playable in all possible worlds.
+
+% In my solution I only query on the private information, but it is an interesting problem to see how one can adapt the sub-\SfiveN{} model I have described into something that can answer common knowledge queries, especially given that \cite{CoxEtAl2015} information strategy makes use of common knowledge.
+
+
