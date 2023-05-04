@@ -13,13 +13,13 @@ Solutions to the problem includes hat-guessing strategies \cite{CoxEtAl2015}, Co
 A hat-guessing strategy utilizes the fact that any legal move in the game can be interpreted as an encoding about some information or recommendation.
 This encoding can then be decoded by each individual, giving rise to some information or recommended action. 
 Such strategies have proven effective for Hanabi, with \cite{CoxEtAl2015} getting an average of $23.00$ points for their recommendation strategy and $24.68$ points for their information strategy. 
-Looking into these strategies in detail, I reckon that these strategies are not only effective, but also efficient, because it is a very small amount of data each agent has to keep track of, and deducing the encoding and updating auxiliary data seems quite trivial for a computer.
-Other solutions utilize Dynamic Epistemic Logic \cite{EgerAndMartens17}, that can very declaratively specify goals and try to find shortest paths in order to satisfy these goals. 
+Looking into these strategies in detail, I see that these strategies are not only effective, but also efficient, because it is a very small amount of data each agent has to keep track of, and deducing the encoding and updating auxiliary data is quite trivial for a computer.
+Other solutions utilize Dynamic Epistemic Logic \cite{EgerAndMartens17}, which can very declaratively specify goals and try to find shortest paths in order to satisfy these goals. 
 There are also machine-learning oriented solutions to this problem \cite{hu2021otherplay}, that nowadays seem to be on-par with the rule-based ones achieving average score of $24.09$.
 
 In this thesis I will describe my solution based on principles of Dynamic Epistemic Logic, with emphasis on knowledge about ones hand, in order to make a group of agents work together and attempt to score as many points as possible in Hanabi. 
 
-The choice of implementation language is Zig \cite{Ziglang}, a new C-like language, which offers a lot of low-level control to the programmer, making it possible to create some highly-optimal data-structures as well as some nitty-gritty optimizations possible at the bit-level.
+The choice of implementation language is Zig \cite{Ziglang}, a new C-like language, which offers a lot of low-level control to the programmer, making it possible to create some highly-optimal data-structures as well as well as making some types of optimizations possible that would be hard to achieve with languages working on a higher level of abstraction.
 
 
 

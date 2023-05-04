@@ -1,7 +1,7 @@
 \section{Implementation}
 
 \subsection{Going through all permutations}
-In sections \ref{sec:how-should-an-agent-play} and \ref{sec:design:removing-worlds-based-on-hints}, I described how to respectively how an agent might know what to do with their cards and how to remove worlds based on hints.
+In sections \ref{sec:how-should-an-agent-play} and \ref{sec:design:removing-worlds-based-on-hints}, I described how an agent might make a move and how to remove worlds based on hints.
 A crucial aspect of both of these procedures is that we need a permutation generation method.
 Generating permutations can be done using Heap's algorithm \cite{wiki:heapsalgorithm}, which seem to be fast and not need that much data in order to compute the permutations.
 If there are $k$ objects that you want to find the permutations of, you only need to maintain some auxiliary arrays of size $O(k)$.
@@ -12,14 +12,14 @@ My implementation is in "{\tt src/multi\_agent\_solvers/PermutationIterator.zig}
 Continuing the section \ref{sec:efficient-generation-of-hands}, I wanted to generate all distinct combinations from a multiset of elements.
 The approach I found is best described with the pseudo-code in Code listing \ref{code:distinct-combinations}. 
 
-It takes a array {\tt  taken\_into\_account} in which initially all elements are 0, which, when filled with {\tt cross\_sum} number of elements will represent a hand.
+It takes an array {\tt  taken\_into\_account} in which initially all elements are 0, which, when filled with {\tt cross\_sum} number of elements will represent a hand.
 {\tt distinct\_pool} which represents the multiset from which the $k$ distinct combinations will be generated from.
 {\tt sum\_array} is a suffix-sum array of the initial {\tt distinct\_pool}.
 {\tt cross\_sum} which is initially the same as $k$.
 {\tt current\_id} is which element is being considered to be added to the hand and finally {\tt accumulator} stores all the distinct combinations.
 
-As an example, for generating all distinct combinations of $k=4$ from the card-pool array in Figure \ref{fig:hand-pool-table}.
-Then the {\tt distinct\_pool} array would be equivalent to the card pool row (except for the "Total" column).
+As an example, if we wanted to generate all distinct combinations of $k=4$ from the card-pool array in Figure \ref{fig:hand-pool-table}.
+Then the {\tt distinct\_pool} array would be equivalent to the "card pool" row (except for the "Total" column).
 And the suffix-sum array {\tt sum\_array} would be
 \[
 [50, 47, 45, 43, 41, 40, 37, 35, 33, 31, 30, 27, 25, 23, 21, 20, 17, 15, 13, 11, 10, 7, 5, 3, 1, 0]
@@ -98,7 +98,7 @@ In order to simplify the implementation of the board game, I simply let it crash
 \subsection{Agents}
 The logical agents in the game are implemented as an Agent struct.
 See a class diagram on Figure \ref{fig:Agent-class-diagram}.
-An Agent has a hand that is represented with {\tt CardWithStates}, here the states refer to each cards actionable states (related to section \ref{sec:how-should-an-agent-play}), but also its hints.
+An Agent has a hand that is represented with {\tt CardWithStates}, here the states refer to each card's actionable states (related to section \ref{sec:how-should-an-agent-play}), but also its hints.
 It does not see the actual cards.
 It has a {\tt KripkeStructure} which is sub-\SfiveN{} model.
 And lastly it has a {\tt CurrentPlayerView} which is the current game that the agent as a player is able to see i.e. it cannot see its own hand, or the contents of the deck.

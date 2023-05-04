@@ -17,7 +17,7 @@ Then the king asks the first wise man whether he knows the colour of their own h
 He then asks the same of the second, then the third.
 
 Let us say that the actual case is RRR i.e. wise man 1, 2 and 3 has a red hat on their head.
-In that case wise man 1 will answer: I don't know, the second wise man will answer: I don't know, but the third wise man will answer: I know, how so?
+In that case wise man 1 will answer: I don't know, the second wise man will answer: I don't know, but the third wise man will answer: I know. How so?
 
 
 
@@ -38,7 +38,7 @@ In that case wise man 1 will answer: I don't know, the second wise man will answ
 \hfill
 	\begin{minipage}[c]{3cm}
 	\includegraphics[width=4cm]{images/three_wise_men_round_2.png}
-	\caption{The model for the third wise man, after both wise man 1 and two have said "I don't know", in succession.}
+	\caption{The model for the third wise man, after both wise man 1 and 2 have said "I don't know", in succession.}
 
 	\label{fig:twm-round-2}
 \end{minipage}
@@ -100,9 +100,9 @@ A fast way to iterate through elements is to make sure that each element is smal
 
 
 \subsection{Formalizing accessing in a model and turning it into an array} \label{sec:model-access}
-In order to get good spatial locality I want to explain how to take the model of sub-\SfiveN{} and turn it into a multi-dimensional array.
+In order to get good spatial locality I will explain how to take the model of sub-\SfiveN{} and turn it into a multi-dimensional array.
 
-In the section \ref{sec:description-of-how-modal-logic-is_applied} I went through the overall approach of generating the worlds from a specific agents POV. 
+In the section \ref{sec:description-of-how-modal-logic-is_applied} I went through the overall approach of generating the worlds from a specific agent's POV. 
 In order to specify how such worlds might be accessed, I extend the solution with some notation. 
 Let $\POVModel_p: W \rightarrow P \rightarrow \mathcal{P}(W)$ be the model for the agent $p$'s POV. 
 Here the interpretation is that the model takes some fixed scenario $w_p$ of type $W$, and some agent $b$ of type $P$, then we have all the worlds that $p$ cannot rule out that $b$ finds possible, given that $w_p$ is the case.  
@@ -123,7 +123,7 @@ But this approach is definitely more than necessary, since what is in the discar
 Furthermore I choose not to take order into account in any of the hands or piles, because it would lead to too many combinations (a hand of 4 cards has 25 permutations, assuming that all are unique).
 What is most interesting to represent is simply then what is uncertain.
 So in this case it is a agent's own hand and the current contents of the deck.
-Since an agent does not their own hand, then assuming a hand will give the contents of the deck unambiguously, and vice versa, so it is sufficient to just represent the unknown hand.
+Since an agent does not know their own hand, then assuming a hand will give the contents of the deck unambiguously, and vice versa, so it is sufficient to just represent the unknown hand.
 So a query $\POVModel_p(w)(b)$, will return the set of hands that $p$ cannot rule out that $b$ finds possible for himself, given that the hand $w$ is the case for $p$.
 
 There are various approaching to representing a hand, I will go through the ones I have devised. 
@@ -172,7 +172,7 @@ Cons: Non-trivial to implement.
 A lot of conversion between values i.e. its hard to work on a world directly without looking it up in a map, so when iterating through a list of possible worlds I will have to look up what that world actually is, this I imagine will substantially slow down the algorithm, although I have not tested it.
 
 \paragraph{Contingency table inspired multiset}
-This representation I stumbled upon when trying to figure out how to generate the possible hands in a fast manner (more on the generation in section \ref{sec:efficient-generation-of-hands}).
+I stumpled upon this representation when I was trying to figure out how to generate the possible hands in a fast manner (more on the generation in section \ref{sec:efficient-generation-of-hands}).
 Given that instance of a card can at most occur 3 times in a hand (or deck for that matter).
 Then an array of 25 elements, each element being able to store 0 through 3, will be a sufficient representation.
 This means that each element in the array need only be 2 bits.
@@ -190,7 +190,7 @@ Cons: Spends a lot more bits than strictly necessary to represent a world.
 All representations have a convincing set of of trade-offs.
 I decided to go with the table representation, since it is very generalizable for other aspects of the game (i.e. can be used to represent decks, piles etc.), as well as easy to work on directly.
 Furthermore it is easy generate, see section \ref{sec:efficient-generation-of-hands}.
-Although I must be honest that I initially was not aware of how the byte-addressable version of this representation would take that much space, but the other representations should definitely be kept in mind if memory proves to be a problem in practice.
+The other representations should definitely be kept in mind if memory proves to be a problem in practice.
 
 
 \subsection{Generating hands in an efficient way} \label{sec:efficient-generation-of-hands}
@@ -322,12 +322,13 @@ we see that there are 4 permutation that matches $o_{hints}$:
 
 Then for each permutation we can decide the actionable states of each card, based on the permutation and the current state of the game.
 For instance, let us assume that the red colour pile in the current state of the game has a 4 on top.
-This means that the card in position 0 can both be playable (if it is a (red,5)), but it is also unplayable (i.e. if it is a (red,1)).
+This means that the card in position 0 can both be playable (if it is a (red,5)), but also be unplayable (i.e. if it is a (red,1)).
 Since it is not certain that the card 0 is playable, we cannot perform step 1 in the action algorithm.
 
 
 \subsection{Removing other players possible worlds based on their hints} \label{sec:design:removing-worlds-based-on-hints}
-When a player $p$ has their model $\POVModel_p$, then for some player $b$, there are some possible worlds which player $p$ cannot rule out are possible for $b$, therefore they are generated as well.
-But if this generation is only based on the cards that are revealed then there will be some possible worlds which conflict with the hints given to $b$, therefore we can also go through all possible worlds for $b$ and remove any that are in conflict with their hints.
-This can be done in much the same way as described in section \ref{sec:how-should-an-agent-play}, where we use permutations of a possible world to see if any permutation matches the hints.
+In section \ref{sec:description-of-how-modal-logic-is_applied} I described how one might generate the possible worlds based on the revealed cards.
+Let's say we have two agents $p$ and $b$, and we generate the model $\mathcal{M}_p$.
+But there is something important to take into account: if this generation is only based on the cards that are revealed then there will be some possible worlds which conflict with the hints given to $b$, therefore we can also go through all possible worlds for $b$ and remove any that are in conflict with their hints.
+This can be done in much the same way as described in section \ref{sec:how-should-an-agent-play}, where we use permutations of a possible world to see if any permutation matches the hints of $b$'s hand.
 

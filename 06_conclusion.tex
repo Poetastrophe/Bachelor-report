@@ -27,6 +27,8 @@ If there was more time I would also like to look into how to optimize some aspec
 
 If I had more time, I would have made a more in-depth comparison of the data-representations of the worlds described in section \ref{sec:representing-a-world}, and see how they might have affected the performance.
 
+If I had more time it could be interesting to look into how the possible-worlds model could be viewed as a probabalistic model, rather than a certain knowledge model. For instance if a lot of possible worlds suggest that the 0th card is able to be played, then it is \emph{probably} able to be played.
+
 \todo[inline]{remember to also note the average time spent on each round, and the maximal amount of time and minumum}
 
 
@@ -36,9 +38,5 @@ Although I feel like I have only dipped my toes into the subject, and there is a
 I also learned a lot about the programming language Zig, which has been a hobby-language of mine for quite a while, but I have not been able to test it on a project of this scale.
 Generally I would say that if you don't mind having to take responsibility for the memory, it is a language which gives a lot of power to a programmer who wants to experiment with data-representation and data structures in general.
 Some aspects that would have been great to look into if I had more time would be multi-core programming using Zig, in order to optimize queries and even generation of the possible worlds.
-
-\todo[inline]{Maybe this should go in further work rather than here}
-Of course this method focuses on what can certainly be known, so if index 2 on the hand cannot be "playable" in all possible worlds, then it will not be played, but it is not unthinkable to use the possible worlds as a sort of probability, and if most of these worlds, we find that we can play index 2, then it is probably successful idea.
-But I will focus on what an agent can know with certitude and therefore I define a card to be "playable" if it is playable in all possible worlds.
 
 
