@@ -11,23 +11,35 @@ implementation.
 \subsection{Unit testing}
 I did some unit-testing in the project, which is directly integrated with the Zig language, in the form that you simply write the unit tests in the source files themselves, under a "test" environment. 
 
-For things with few dependencies, like the {\tt CardSet} class, the generator methods, or printing methods, they are easy to verify and unit-tests helps that these basic methods/classes can be relied on. But of course, unit-testing becomes significantly harder when you have to combine more components. For instance, when testing whether the generated worlds are correct, I would have to compare it to something much simpler. In this case I tried to adapt my methods in order to make it match the three wise men problem, and then I would visually inspect it myself to see whether it was correct, this is done in the file {\tt src/multi\_agent\_solvers/agent.zig} in the test called "Three wise men simulation".
+For things with few dependencies, like the {\tt CardSet} class, the generator methods, or printing methods, they are easy to verify and unit-tests helps that these basic methods/classes can be relied on.
+But of course, unit-testing becomes significantly harder when you have to combine more components.
+For instance, when testing whether the generated worlds are correct, I would have to compare it to something much simpler.
+In this case I tried to adapt my methods in order to make it match the three wise men problem, and then I would visually inspect it myself to see whether it was correct, this is done in the file {\tt src/multi\_agent\_solvers/agent.zig} in the test called "Three wise men simulation".
 
-Furthermore unit-testing is pretty crucial when working with manual memory management languages as Zig, since the risk of orphaned memory is much more severe, and Zig facilitates prevention of memory leaks by detecting this in its unit tests. 
+Unit-testing is pretty crucial when working with manual memory management languages like Zig, since the risk of orphaned memory is much more severe, and Zig facilitates prevention of memory leaks by detecting this in its unit tests. 
 
 
 \subsection{Early feasibility test for the world generation method}
-After implementing the table encoding for a world, I decided to make a feasibility test, whether it was realistic generating the possible worlds for Hanabi. The test is in {\tt src/bigtest1.zig}. I generate 20 random initial rounds to see how much each one takes in space and time, the most amount of space used by a model for a round was 11.27 GB, and the least space was 3.82 GB. The most amount of time spent on generating a model was 14.3 seconds, and the least time was 4.5 seconds.
-These numbers seem to well within the constraints defined in the Problem Analysis chapter and therefore I decided that it would be feasible to continue with the current solution. But of course I did not take into account how much time might actually be spent on querying and removing worlds, for more details on that see section \ref{sec:testing-kripkestructure-class}.
+After implementing the table encoding for a world, I decided to make a feasibility test, whether it was realistic generating the possible worlds for Hanabi.
+The test is in {\tt src/bigtest1.zig}.
+I generate 20 random initial rounds to see how much each one takes in space and time, the most amount of space used by a model for a round was 11.27 GB, and the least space was 3.82 GB.
+The most amount of time spent on generating a model was 14.3 seconds, and the least time was 4.5 seconds.
+These numbers are well within the constraints given by Problem Analysis chapter and therefore I decided that it would be feasible to continue with the current solution.
+But of course I did not take into account how much time might actually be spent on querying and removing worlds, for more details on that see section \ref{sec:testing-kripkestructure-class}.
 
 \subsection{Testing my game implementation by making an interactive interface}
-I wanted to test the {\tt Game} class, to see if anything unexpected happened if some specific set of action occurs. In order to do this, instead of manually making some unit tests, I implemented a TUI interface of the game and tried various things in order to "break" the {\tt Game} implementation. This is a sort of white-box testing where I also can try to re-evaluate if the interfaces I have implemented have some oversight. The TUI interface is in {\tt src/cli\_simulation\_runner.zig}.
+I wanted to test the {\tt Game} class, to see if anything unexpected happened if some specific sequence of action occurs.
+In order to do this, instead of manually making some unit tests, I implemented a TUI interface of the game and tried various things in order to "break" the {\tt Game} implementation.
+This is a sort of white-box testing where I also can try to re-evaluate if the interfaces I have implemented have some oversight.
+The TUI interface is in {\tt src/cli\_simulation\_runner.zig}.
 
 \todo[inline]{Make the program have different compile arguments, in order to facilitate, like, how to run the runner? etc}
 \todo[inline]{Make install instructions on zig so that the user can run my program.}
 
 \subsection{Ad hoc test-inspection system}
-Making use of the fact that zig optimizes dead branches away, if known at compile-time will never be executed, I made an ad hoc white-box testing system. Because there were some things I would like to continually inspect. This is done using a file that contain some global-accessible flags: {\tt src/multi\_agent\_solvers/globals\_test.zig}.
+Making use of the fact that zig optimizes dead branches away, if known at compile-time will never be executed, I made an ad hoc white-box testing system.
+Because there were some things I would like to continually inspect.
+This is done using a file that contain some global-accessible flags: {\tt src/multi\_agent\_solvers/globals\_test.zig}.
 
 So what I mean that it optimizes away dead branches is that, given the pseudo-code at \ref{code:statically-removing-branches}, we see that we have an additional branch in the complicated function, which is only used for testing/inspection purposes, but this branch will be removed at compile-time if it is known that {\tt globals.check\_kripkestructure=false} on compile time.
 
@@ -53,7 +65,8 @@ function some_complicated_function(game, kripkestructure):
 The average score achieved through simulating 20 random games is 14.2, with lowest score of 12, and highest score of 17, which means that the program is far from being as good as many existing solutions.
 
 \subsection{Testing the {\tt KripkeStructure} class} \label{sec:testing-kripkestructure-class}
-The bulk of the work done by the program is {\tt KripkeStruture.init(...)} and {\tt Agent.updateCardStates(...)}. I will here mainly focus on the {\tt Kripkestructure} generation, and also test the time of {\tt KripkeStructure.deinit()}, because I think that there might be a lot of time spent deallocating the structure as well.
+The bulk of the work done by the program is {\tt KripkeStruture.init(...)} and {\tt Agent.updateCardStates(...)}.
+I will here mainly focus on the {\tt Kripkestructure} generation, and also test the time of {\tt KripkeStructure.deinit()}, because I think that there might be a lot of time spent deallocating the structure as well.
 
 The {\tt KripkeStructure.init(...)} works in three steps
 \begin{enumerate}
@@ -66,7 +79,9 @@ The {\tt KripkeStructure.deinit(...)} method simply iterates through the structu
 The reason that I looked on these things was to 1) judge the efficiency of the distinct combination generator, 2) see if there was something to be gained from using a different type of allocator, because I know that I allocate and deallocate a lot of elements, 3) and if the method of removing worlds is actually efficient.
 
 In 5 random games, it took about 57 minutes for all the {\tt KripkeStructure.init(...)} and {\tt KripkeStructure.deinit()} calls,
-of which $24.5\%$ of the time is spent of generation distinct combinations, $1.2\%$ of the time is spent on deallocating space and $74.2\%$ are spent on removing worlds based on hints. I think the removal of worlds takes so much time is that I have not optimized for identical permutations. So no matter how many hints there is on a hand, it will generate all $k!$ different hands.
+of which $24.5\%$ of the time is spent of generation distinct combinations, $1.2\%$ of the time is spent on deallocating space and $74.2\%$ are spent on removing worlds based on hints.
+I think the removal of worlds takes so much time is that I have not optimized for identical permutations.
+So no matter how many hints there is on a hand, it will generate all $k!$ different hands.
 
 Without measuring it I think {\tt Agent.updateCardStates(...)} will take a about the same amount of time as the one removing worlds based on hints, since it will also have to take the permutations into account.
 

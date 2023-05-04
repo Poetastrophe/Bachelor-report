@@ -15,7 +15,7 @@ This encoding can then be decoded by each individual, giving rise to some inform
 Such strategies have proven effective for Hanabi, with \cite{CoxEtAl2015} getting an average of $23.00$ points for their recommendation strategy and $24.68$ points for their information strategy. 
 Looking into these strategies in detail, I reckon that these strategies are not only effective, but also efficient, because it is a very small amount of data each agent has to keep track of, and deducing the encoding and updating auxiliary data seems quite trivial for a computer.
 Other solutions utilize Dynamic Epistemic Logic \cite{EgerAndMartens17}, that can very declaratively specify goals and try to find shortest paths in order to satisfy these goals. 
-There are also machine-learning oriented solutions to this problem\cite{hu2021otherplay}, that nowadays seem to be on-par with the rule-based ones achieving average score of $24.09$.
+There are also machine-learning oriented solutions to this problem \cite{hu2021otherplay}, that nowadays seem to be on-par with the rule-based ones achieving average score of $24.09$.
 
 In this thesis I will describe my solution based on principles of Dynamic Epistemic Logic, with emphasis on knowledge about ones hand, in order to make a group of agents work together and attempt to score as many points as possible in Hanabi. 
 
@@ -41,10 +41,12 @@ Of the cards there are 5 \emph{suits} and 5 \emph{values}.
 The suits are red, green, blue, white, yellow. 
 The values are 1 through 5. 
 For each suit there is three cards of value 1, two cards of value 2, two cards of value 3, two cards of value 4 and one card of value 5.
-The number of cards in each player's hand depends on the number of players. If there are 3 players or less, they will have 5 cards each. Otherwise they will have 4 cards each.
+The number of cards in each player's hand depends on the number of players. If there are 3 players or less, they will have 5 cards each. 
+Otherwise they will have 4 cards each.
 
 The goal of the game is to play add as many cards as possible to the \emph{colour piles}. 
-There are 5 colour piles, one for each suit. You gain a point for each card in the colour piles, with a maximum of 25 points.
+There are 5 colour piles, one for each suit. 
+You gain a point for each card in the colour piles, with a maximum of 25 points.
 
 A player can spent her turn on one of the following actions
 
@@ -67,7 +69,8 @@ If a card does not add to a colour pile then it is put in the \emph{discard pile
 If there are no black tokens the game ends immediately.  
 
 \paragraph{Hinting}
-If a player chooses to hint, he can hint any other player. Hints are restricted, so you can either hint about cards matching a suit or cards matching a value. 
+If a player chooses to hint, he can hint any other player. 
+Hints are restricted, so you can either hint about cards matching a suit or cards matching a value. 
 Imagine a hand of following configuration: ((red,1),(blue,3),(red,2),(yellow,3)), each having respective indices 0 through 3. 
 Then if you hint "cards of value 3", then you have to give the positions of both (blue,3) and (yellow,3) i.e. index 1 and 3. 
 And if you give the hint "cards of red suit" then you have to give the position of both (red,1) and (red,2) i.e. index 0 and 2. 
@@ -79,7 +82,8 @@ When giving a hint it removes 1 blue token, if you cannot do that, you cannot gi
 A player can discard any card on their hand, and it will result in the card going in the discard pile and it adds 1 blue token (and can only be done if there are less than 8 blue tokens left).
 
 \paragraph{End of the game}
-The game ends immediately if there are no black tokens left. The game also ends if the last card from the deck has been drawn, in which case every player can play an additional round (including the player who drew the last card) and then the game ends.
+The game ends immediately if there are no black tokens left. 
+The game also ends if the last card from the deck has been drawn, in which case every player can play an additional round (including the player who drew the last card) and then the game ends.
 
 After the game ends the score is decided by counting how many cards there is in the colour piles.
 
