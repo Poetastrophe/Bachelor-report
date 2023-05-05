@@ -47,7 +47,7 @@ In that case wise man 1 will answer: I don't know, the second wise man will answ
 Figure \ref{fig:twm-round-0} is the $\mathcal{M}_{3}$ model for the initial configuration. 
 This means that wise man 3 does not know whether he has a red hat or a white hat. 
 And for each of these scenarios he can imagine that 2 cannot know either, and neither can 1. 
-I will refer to scenarios that are fixed from a particular player's POV for \emph{fixed scenarios}. 
+I will refer to scenarios that are fixed from a particular agent's POV for \emph{fixed scenarios}. 
 So here the fixed scenarios are RRR and RRW with respect to wise man 3's model. 
 All fixed scenarios implicitly has the equivalence relation $R_3$ in this case, because they are both possible given the information wise man 3 has.
 
@@ -88,9 +88,9 @@ How such a possible hand for some agent $p$ would be generated is to take the mu
 \footnote{because there might be duplicates of the same card}
 : The initial full deck $S_{deck}$, the current discard pile $S_{discard}$, the current colour piles $S_{color}$, the other agents' hands $S_{op}$, and find what is left to take from. 
  Then we can see that the set of possible hands $p$ can generate must be taken from the multiset $S_p = S_{deck} \setminus S_{discard} \setminus S_{color} \setminus S_{op}$. 
- The set of hands then is the distinct combinations of size $k$ that we take from the multiset $S_p$.
+The set of hands then is the distinct combinations of size $k$ that we take from the multiset $S_p$.
 Here $k$ is 4 or 5 depending on the size of the hand.
-Of course this method does not take into account the hands which might conflict with a given set of hints. 
+This method does not take into account the hands which might conflict with a given set of hints. 
 More on this in section \ref{sec:design:removing-worlds-based-on-hints}.
 
 
@@ -109,17 +109,17 @@ Here the interpretation is that the model takes some fixed scenario $w_p$ of typ
 The fixed scenarios are strictly from the POV of $p$, which means that all fixed scenarios are all the worlds that $p$ finds possible from the information she has got. 
 So all fixed scenarios has an equivalence relation $R_p$. 
 The set given by $\POVModel_p(w_p)(b)$ has the equivalence relation $R_b$ among each other, as well as for any $w_b \in \POVModel_p(w_p)(b)$ has the relation $R_b(w_b,w_p)$.
-Of course if $b=p$ then we have the unit set, which is simply $\POVModel_p(w_p)(p) = \{w_p\}$.
-Which also makes sense in the interpretation "given that we fix the world to $w_p$, then agent $p$ can only imagine that $p$'s only possible world is $w_p$". 
+An interesting case is $b=p$ then we have the unit set, which is simply $\POVModel_p(w_p)(p) = \{w_p\}$,
+which makes sense in the interpretation "given that we fix the world to $w_p$, then agent $p$ can only imagine that $p$'s only possible world is $w_p$". 
 
 It is clear from the above mapping that this could be encoded using a 3-dimensional array. 
 Where $W$ (the first argument) could be interpreted as an enumeration of the fixed scenarios for $p$, and $P$ is an enumeration of the agents, and $\mathcal{P}(W)$ is an array of the possible worlds.
 
 
 \subsection{Choosing a compact encoding for a world} \label{sec:representing-a-world}
-A world is simply a possible state of the entire game, i.e. everything is specified, including the hands you can't see.
+A world is simply a possible state of the entire game, i.e. everything is specified, including the hand you can't see.
 A naive approach to representing a world is to take the deck, the discard pile, all of the hands etc. into account.
-But this approach is definitely more than necessary, since what is in the discard pile and in the colour pile, as well as most hands, are information easily accessed by the agents themselves, by checking the current state of the game.
+But this approach is definitely more than necessary, since what is in the discard pile and in the colour pile, as well as most hands, are information easily accessed by looking at the current state of the game.
 Furthermore I choose not to take order into account in any of the hands or piles, because it would lead to too many combinations (a hand of 4 cards has 25 permutations, assuming that all are unique).
 What is most interesting to represent is simply then what is uncertain.
 So in this case it is a agent's own hand and the current contents of the deck.
@@ -158,11 +158,11 @@ Depending on the situation, you could enumerate each possible hand.
 Then a world need only an integer size large enough to store 18480 or 99455 depending on the case.
 This is respectively 15 bits and 17 bits.
 So this representation is definitely compact.
-Of course some edge-cases exists, for instance in a 5 player game, when the last card has been drawn, then there can exist both 4 and 5 cards representations at the same time, but that would require bits enough to represent $18480+99455 = 117935 < 2^{17}$ so 17 bits should still be sufficient.
+Some edge-cases exists, for instance in a 5-player game, when the last card has been drawn, then there can exist both 4 and 5 cards representations at the same time, but that would require bits enough to represent $18480+99455 = 117935 < 2^{17}$ so 17 bits should still be sufficient.
 
-Of course if the representation would have to be byte-addressable in an array, then it would have to spent a whole number of bytes, which is respectively 2 bytes (16 bits) or 3 bytes (24 bits).
+If the representation would have to be byte-addressable in an array, then it would have to spent a whole number of bytes, which is respectively 2 bytes (16 bits) or 3 bytes (24 bits).
 
-Of course this enumeration would only create a mapping from an integer to an actual representation, so we would still have to choose a representation that this integer maps to.
+This enumeration would only create a mapping from an integer to an actual representation, so we would still have to choose a representation that this integer maps to.
 Which can be either sorted-order or table representation
 
 Pros: Very compact representation, the enumeration map should only take some constant amount of memory at all times.
@@ -196,7 +196,7 @@ The other representations should definitely be kept in mind if memory proves to 
 \subsection{Generating hands in an efficient way} \label{sec:efficient-generation-of-hands}
 Using the methods described in {\tt math.stackexchange} posts "Efficient algorithm to find all unique combinations of set given duplicates" \cite{HardmathcontigencyTablePost} and \cite{GCabrecursiveGenerationPost}, I was able to design a good generation method for the hands.
 The main idea is that we represent the hands we want to generate in a contingency table, where we have some pool to take from.
-So a case with hand size of 0 and the pool being the initial deck will be Figure \ref{fig:hand-pool-table} (of course in a practical game, you would know something about the other hands and the discard pile etc. so the pool would be less than the initial deck).
+So a case with hand size of 0 and the pool being the initial deck will be Figure \ref{fig:hand-pool-table} (although, in a practical game, you would know something about the other hands and the discard pile etc. so the pool would be less than the initial deck).
 Then the problem is to generate all such contingency tables, such that the sum of the hand is $k$ (usually 4 or 5), and the column sums stay the same, for example see Figure \ref{fig:hand-pool-table-with-hand}.
 
 \begin{figure}
@@ -263,7 +263,7 @@ And private information, is what an agent individually knows based on the other 
 
 This can be compared to DEL where public information is what the model guarantees is public knowledge, and private information is simply queries that holds true for all possible worlds from that agents POV.
 
-In my solution I will only be querying on the private information. But public information is interesting and is commented on in the Conclusion section.
+In my solution I will only be querying on the private information, but public information is interesting and is commented on in the Conclusion section.
 
 Given a hand, which is a multiset of known or unknown cards, how does an agent know what card to play based on the private information?
 Firstly I will have to decide \emph{when} a card should be played, discarded etc. Here I use the action algorithm from \cite{CoxEtAl2015}, with minor modifications:
@@ -285,13 +285,12 @@ I define the actionable states for a card as follows (also based on \cite{CoxEtA
 	\item Playable: If it is able to be played in the current game state.
 	\item Dead: If the card has already been successfully played and is not needed any more.
 	\item Dispensable: If the card could be played at some point (now or in the future), but there is at least one more of the same card left.
-	\item Duplicate: There exists a duplicate in another players hand.
+	\item Duplicate: There exists a duplicate in another agent's hand.
 \end{itemize}
 An agents would eventually have to interpret their hand as a list of cards (where order matters),
 due to the fact that they have to play some index from their hand (which they might have full, partial, or no knowledge about).
-And it is for this list of cards that the agent has to derive the actionable states for each card, in order to come up with a move.
-\todo[inline]{Remember to define player and agent}
-But this interpretation of a hand as a list of cards is in contrast to how a world is currently defined: A multiset of cards, where order does not matter.
+It is for this list of cards that the agent has to derive the actionable states for each card, in order to come up with a move.
+Although, this interpretation of a hand as a list of cards is in contrast to how a world is currently defined: A multiset of cards, where order does not matter.
 So we have to define some mapping between an multiset of cards (a world) and a list of cards (the cards on an agent's hand).
 
 To specify how an agent will view it's own hand as a list, we let what is known about a card be denoted by the pair: its suit, and its value. Where it is valid that a suit or value can be "unknown".
@@ -300,9 +299,9 @@ As an example: If agent $p$ has the hand ((red,1),(blue,3),(red,2),(yellow,3)), 
 
 \[o_{hints} = ((red,unknown),(unknown,unknown),(red,unknown),(unknown,unknown))\]
 
-In order to create the mapping from a multiset in a world to an list that matches the hand indices, we have to take the hints given to player $p$ into account.
+In order to create the mapping from a multiset in a world to an list that matches the hand indices, we have to take the hints given to agent $p$ into account.
 
-So given an unknown hand for player $p$ specified with the list of hints $o_{hints}$, and the model $\POVModel_p$ we have to decide what possible actionable states is in each card. 
+So given an unknown hand for agent $p$ specified with the list of hints $o_{hints}$, and the model $\POVModel_p$ we have to decide what possible actionable states is in each card. 
 
 For each fixed scenario for $p$, there is a specific hand for $p$, denoted $h_{specific}$.
 Since each hand is stored as a multiset, we have to use the hints $o_{hints}$ to figure out how the set should be mapped to a list.
@@ -326,7 +325,7 @@ This means that the card in position 0 can both be playable (if it is a (red,5))
 Since it is not certain that the card 0 is playable, we cannot perform step 1 in the action algorithm.
 
 
-\subsection{Removing other players possible worlds based on their hints} \label{sec:design:removing-worlds-based-on-hints}
+\subsection{Removing other agents' possible worlds based on their hints} \label{sec:design:removing-worlds-based-on-hints}
 In section \ref{sec:description-of-how-modal-logic-is_applied} I described how one might generate the possible worlds based on the revealed cards.
 Let's say we have two agents $p$ and $b$, and we generate the model $\mathcal{M}_p$.
 But there is something important to take into account: if this generation is only based on the cards that are revealed then there will be some possible worlds which conflict with the hints given to $b$, therefore we can also go through all possible worlds for $b$ and remove any that are in conflict with their hints.

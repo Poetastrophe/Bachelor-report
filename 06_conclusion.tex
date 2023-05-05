@@ -10,33 +10,31 @@
 % \end{itemize}
 % }
 
-I have made a product based on a modified model of \SfiveN{}, denoted sub-\SfiveN{}, in which each agent can deduce a big set of possibilities for the other agents (and itself), and it is able to look through each possible world to extract some property about each world.
+I have made a product based on a modified model of \SfiveN{}, denoted sub-\SfiveN{}, in which each agent can deduce a big set of possibilities for the other agents (and itself), and is able to look through each possible world to extract some property about each world.
 The average score is 14.2 which is pretty far from many existing solutions.
-The memory-layout of sub-\SfiveN{} in the case of Hanabi, is quite simple, given that it is implemented using a 3-dimensional array, and each world spends only 25 bytes of memory, which are great for query algorithms that look through each world sequentially.  
-Further space was saved by making sure that each world stores a multiset of cards, instead of a list of cards, while still retaining the ability to answer queries about specific cards on a players hand.
+The memory-layout of sub-\SfiveN{} in the case of Hanabi, is quite simple, given that it is implemented using a 3-dimensional array, and each world spends only 25 bytes of memory.
+This compactness and good spatial locality is great for query algorithms that look through each world sequentially. 
+Further space was saved by making sure that each world stores a multiset of cards, instead of a list of cards, while still retaining the ability to answer queries about specific cards on a agent's hand.
 
-If I had more time I would look into how public knowledge among the agents could be deduced from sub-\SfiveN{} model.
-Given that public knowledge is very useful for strategies like the information strategy in \cite{CoxEtAl2015}.
+\subsection{Further work}
+Public knowledge is very useful for strategies like the information strategy in \cite{CoxEtAl2015}, so 
+if I had more time I would look into how public knowledge among the agents could be deduced from the sub-\SfiveN{} model, and whether it was actually possible to do this.
+Furthermore, it would be interesting to see which strategies would work great in conjunction with the sub-\SfiveN{} model.
+For instance the two rule-based strategies described in \cite{CoxEtAl2015}, I would argue, work completely orthogonally to the sub-\SfiveN{} model solution, which means that both of these strategies could be combined with sub-\SfiveN{} model in order to make better decisions.
+In the case of the information strategy, the information gained by encoding the moves could further modify each agent's model and thereby gain more information by using such a strategy. 
+Similarly, if the recommendation strategy says one of your cards is "playable" then you can eliminate all worlds for which that card is not playable.
 
-If I had more time, it would be interesting to see which strategies would work great in conjunction with the sub-\SfiveN{} model.
-For instance the two rule-based strategies described in \cite{CoxEtAl2015}, I would argue, works completely orthogonally to the sub-\SfiveN{} model solution, which means that both of these strategies could be combined with sub-\SfiveN{} model in order to make better decisions.
-In the case of the information strategy, then the information gained by encoding the moves could further modify each agent's model and thereby gain more information by using such a strategy. 
-Similarly if the recommendation strategy says one of your cards is "playable" then you can eliminate all worlds for which that card is not playable.
+Data representation and optimizing the Zig code would also be of priority if I had more time. An interesting option is to make a more in-depth comparison of the data-representations of the worlds described in section \ref{sec:representing-a-world}, and see how they would have affected performance in practice. Furthermore a lot of redundant permutations are generated whenever inspecting a possible world, which can be optimized away by only keep unique permutations.
 
-If there was more time I would also like to look into how to optimize some aspects of the code, because right now there are a lot of redundant permutations for each hand that are being checked, which makes it spent more time than necessary trying to go through the possible worlds.
-
-If I had more time, I would have made a more in-depth comparison of the data-representations of the worlds described in section \ref{sec:representing-a-world}, and see how they might have affected the performance.
-
-If I had more time it could be interesting to look into how the possible-worlds model could be viewed as a probabalistic model, rather than a certain knowledge model. For instance if a lot of possible worlds suggest that the 0th card is able to be played, then it is \emph{probably} able to be played.
-
-\todo[inline]{remember to also note the average time spent on each round, and the maximal amount of time and minumum}
-
-
-In this project I learned a lot about modal logic, which strikes me as a good balance between using a powerful type of logic, as well as being pretty realistic to implement with reasonable performance.
-Although I feel like I have only dipped my toes into the subject, and there is a lot more depths that I have yet to explore.
+Another interesting aspect of the Dynamic Epistemic Logic is to look into how a model could be viewed as a probabalistic model, rather than a certain knowledge model. 
+For instance if a lot (but not all) of the possible worlds suggest that agent $p$'s 0th card is able to be played, then it is \emph{probably} able to be played.
+\todo[inline]{look through for spent vs spend, what is the difference?}
+\subsection{What I have learned}
+In this project I learned a lot about modal logic, which strikes me as a good balance between using a powerful type of logic, as well as being pretty realistic to implement with reasonable performance, although, I have only scratched the surface of the subject, and there is a lot more to be explored in regards to it.
 
 I also learned a lot about the programming language Zig, which has been a hobby-language of mine for quite a while, but I have not been able to test it on a project of this scale.
-Generally I would say that if you don't mind having to take responsibility for the memory, it is a language which gives a lot of power to a programmer who wants to experiment with data-representation and data structures in general.
-Some aspects that would have been great to look into if I had more time would be multi-core programming using Zig, in order to optimize queries and even generation of the possible worlds.
+The main difficulty of using Zig is the fact that you have to take responsibility for how memory is managed. This can easily lead to decision-fatigue, especially if you are not accustomed to this style of programming.
+\todo[inline]{find instances of zig and replace with Zig}
+The advantage of Zig is that the language gives you a lot of tools in order to optimize code and data structures to a degree which is hard to do in a lot of languages.
 
 
