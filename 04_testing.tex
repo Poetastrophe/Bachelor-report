@@ -9,7 +9,7 @@
 % \end{itemize}
 % }
 
-\todo[inline]{I have to stress WHY I used these tests}
+% \todo[inline]{I have to stress WHY I used these tests}
 \subsection{Unit testing and integration testing}
 I did some unit-testing in the project, which is directly integrated with the Zig language, in the form that you simply write the unit tests in the source files themselves, under a "test" environment. 
 Things with a few dependencies are easy to verify and unit-tests give confidence to that these basic methods/classes can be relied on. These simple components are the {\tt CardSet} class, the permutation and distinct combination methods, or printing methods. 
@@ -34,8 +34,8 @@ I wanted to test the {\tt Game} class, to see if anything unexpected happened if
 In order to do this, instead of manually making some unit tests, I implemented a TUI interface of the game and tried various things in order to "break" the {\tt Game} implementation.
 The TUI interface is in {\tt src/cli\_simulation\_runner.zig}.
 
-\todo[inline]{Make the program have different compile arguments, in order to facilitate, like, how to run the runner? etc}
-\todo[inline]{Make install instructions on zig so that the user can run my program.}
+% \todo[inline]{Make the program have different compile arguments, in order to facilitate, like, how to run the runner? etc}
+% \todo[inline]{Make install instructions on zig so that the user can run my program.}
 
 \subsection{Ad hoc white-box testing system}
 Some things I wanted to continually inspect throughout the project, and some of these things were related to the internal behaviour of the methods.
